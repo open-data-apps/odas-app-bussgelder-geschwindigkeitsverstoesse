@@ -19,9 +19,17 @@
     "Format: CSV mit Semikolon-Trennzeichen und Windows-1252 Encoding.",
     "Der Datenabruf erfolgt über einen lokalen Proxy-Endpunkt, um CORS-Fehler zu vermeiden."
   ],
-  "tags-funktion": ["Datenanalyse", "Verkehrsüberwachung"],
-  "tags-dateityp": ["CSV"],
-  "tags-datenart": ["Verwaltungsdaten", "Bußgelder"],
+  "tags-funktion": [
+    "Datenanalyse",
+    "Verkehrsüberwachung"
+  ],
+  "tags-dateityp": [
+    "CSV"
+  ],
+  "tags-datenart": [
+    "Verwaltungsdaten",
+    "Bußgelder"
+  ],
   "screenshots": [
     "assets/Desktop_Screenshot_1.png",
     "assets/Desktop_Screenshot_2.png"
@@ -159,12 +167,15 @@
       "format": {
         "typ": "markdown"
       },
-      "default": ["_multiline_", "Alle Daten sind geschützt."],
+      "default": [
+        "_multiline_",
+        "Alle Daten sind geschützt."
+      ],
       "erforderlich": "ja"
     },
     "urlDaten": {
       "label": "URL zum Datensatz im ODP",
-      "hilfe": "Der Datensatz im Open Data Portal mit den Daten der Generic App",
+      "hilfe": "Der Datensatz im Open Data Portal mit den Daten der Bußgelder & Geschwindigkeitsverstöße App",
       "format": {
         "typ": "url"
       },
@@ -198,7 +209,9 @@
       "hilfe": "Angabe der App-Sprache",
       "format": {
         "typ": "dropdown",
-        "optionen": ["de"],
+        "optionen": [
+          "de"
+        ],
         "default": "de"
       },
       "erforderlich": "ja"
