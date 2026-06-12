@@ -405,6 +405,37 @@ function app(configdata, enclosingHtmlDivElement) {
       "#app-error",
     ].forEach(hide);
     show("#app-loading");
+
+    // Falls Daten bereits im Cache liegen, sofort laden
+    window._odas_cachedBussgelderDataMap = window._odas_cachedBussgelderDataMap || {};
+    if (window._odas_cachedBussgelderDataMap[year]) {
+      allData = window._odas_cachedBussgelderDataMap[year];
+      el.querySelector("#loading-text").textContent = `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
+      setBar(100);
+
+      try {
+        await loadScript(
+          "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
+        );
+        await loadScript(
+          "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+        );
+
+        // UI aufbauen
+        buildFilterOptions();
+        applyFilter();
+
+        setTimeout(() => hide("#app-loading"), 200);
+        ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
+      } catch (err) {
+        hide("#app-loading");
+        show("#app-error");
+        el.querySelector("#app-error").innerHTML =
+          "<strong>Fehler beim Laden der Skripte:</strong> " + err.message;
+      }
+      return;
+    }
+
     el.querySelector("#loading-text").textContent =
       "Bibliotheken werden geladen …";
     setBar(5);
@@ -443,6 +474,9 @@ function app(configdata, enclosingHtmlDivElement) {
           r.GELDBUSSE &&
           !isNaN(parseInt(r.GELDBUSSE, 10)),
       );
+
+      // Im globalen Cache speichern
+      window._odas_cachedBussgelderDataMap[year] = allData;
 
       el.querySelector("#loading-text").textContent =
         `✓ ${fmt(allData.length)} Datensätze geladen.`;
