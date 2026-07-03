@@ -232,7 +232,68 @@
     "weiterfuehrendeLinks": {
       "label": "Weiterführende Links",
       "hilfe": "Verwandte Datensätze / Hintergrundquellen (Markdown/HTML). Leer = ausgeblendet.",
-      "format": { "typ": "markdown" },
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "datenquelleHinweis": {
+      "label": "Methodik / Datenquelle-Hinweis",
+      "hilfe": "Herkunft, Erhebungsmethode und Limitierungen (HTML/Markdown). Leer = ausgeblendet.",
+      "format": {
+        "typ": "markdown"
+      },
+      "default": "<p>Die Daten stammen aus monatlich aktualisierten CSV-Dateien der Stadt Bonn (opendata.bonn.de). Die TBNR-Codes (Tatbestandsnummern) werden über den <a href=\"https://www.kba.de/DE/Themen/ZentraleRegister/FAER/BT_KAT_OWI/bt_kat_owi_node.html\" target=\"_blank\">bundeseinheitlichen Tatbestandskatalog</a> entschlüsselt. Die CSV-Dateien werden mit Windows-1252-Kodierung eingelesen und Mojibake-korrigiert.</p>",
+      "erforderlich": "nein"
+    },
+    "datenStand": {
+      "label": "Datenstand",
+      "hilfe": "Freitext-Hinweis zum Stand der Daten. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 60
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext1": {
+      "label": "KPI-Erklärung 1: Verstöße gesamt",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext2": {
+      "label": "KPI-Erklärung 2: Bußgelder gesamt (€)",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext3": {
+      "label": "KPI-Erklärung 3: Ø Bußgeld (€)",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
+      "default": "",
+      "erforderlich": "nein"
+    },
+    "kpiKontext4": {
+      "label": "KPI-Erklärung 4: Messpunkte (Orte)",
+      "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
+      "format": {
+        "typ": "string",
+        "laenge": 250
+      },
       "default": "",
       "erforderlich": "nein"
     }
