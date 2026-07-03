@@ -21,6 +21,12 @@ Single Page Application mit Logo, Menü, Impressum/Datenschutz/Kontakt-Seiten un
 
 ---
 
+## Für wen ist diese App?
+
+Diese App analysiert Geschwindigkeitsverstöße und Bußgelder der Stadt Bonn. Sie richtet sich an Journalist:innen, Verkehrsforscher:innen und Bürger:innen, die Transparenz über Tempokontrollen erhalten möchten.
+
+---
+
 ## Datenformat
 
 Unterstützt **CSV** (Semikolon-separiert, Windows-1252-kodiert).

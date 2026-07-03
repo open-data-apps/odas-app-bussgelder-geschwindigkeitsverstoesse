@@ -28,6 +28,12 @@ function extractPathFromUrl(url) {
   }
 }
 
+function escapeHtml(str) {
+  var div = document.createElement("div");
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
 function app(configdata, enclosingHtmlDivElement) {
   // ── Konfiguration ─────────────────────────────────────────────────────────────
   const TITLE =
@@ -151,6 +157,11 @@ function app(configdata, enclosingHtmlDivElement) {
         </div>
       </div>
 
+      <!-- ── Datenfrische ── -->
+      <div id="bg-datenstand-row" class="text-end mb-2 d-none">
+        <small id="bg-datenstand" class="text-muted"></small>
+      </div>
+
       <!-- ── Ladeindikator ── -->
       <div id="app-loading" class="mb-4">
         <div class="d-flex align-items-center gap-3 mb-2">
@@ -170,28 +181,28 @@ function app(configdata, enclosingHtmlDivElement) {
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#2563eb,#1e40af)">
             <span class="kpi-ico">⚡</span>
-            <div class="kpi-val" id="kpi-anzahl">–</div>
+            <div class="kpi-val" id="kpi-anzahl">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-1"></div>
             <div class="kpi-lbl">Verstöße gesamt</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#dc2626,#9b1c1c)">
             <span class="kpi-ico">💶</span>
-            <div class="kpi-val" id="kpi-summe">–</div>
+            <div class="kpi-val" id="kpi-summe">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-2"></div>
             <div class="kpi-lbl">Bußgelder gesamt (€)</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#d97706,#92400e)">
             <span class="kpi-ico">📊</span>
-            <div class="kpi-val" id="kpi-avg">–</div>
+            <div class="kpi-val" id="kpi-avg">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-3"></div>
             <div class="kpi-lbl">Ø Bußgeld (€)</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#059669,#064e3b)">
             <span class="kpi-ico">📍</span>
-            <div class="kpi-val" id="kpi-orte">–</div>
+            <div class="kpi-val" id="kpi-orte">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-4"></div>
             <div class="kpi-lbl">Messpunkte (Orte)</div>
           </div>
         </div>
@@ -269,6 +280,10 @@ function app(configdata, enclosingHtmlDivElement) {
         </div>
         <div class="card-footer bg-white py-2" id="pagination"></div>
       </div>
+
+      <!-- ── Weitere Informationen ── -->
+      <div id="bg-weitere-infos-section"></div>
+      <div id="bg-methodik-section"></div>
 
     </div>
   `;
@@ -369,6 +384,14 @@ function app(configdata, enclosingHtmlDivElement) {
   }
 
   async function fetchCsvText(url) {
+    var lastModified = null;
+    try {
+      var headResp = await fetch(url, { method: "HEAD" });
+      lastModified = headResp.headers.get("Last-Modified");
+    } catch (e) {
+      // CORS kann HEAD blockieren → ignorieren
+    }
+
     const fullPath = window.location.pathname.replace(/\/+$/, "");
     const proxyEndpoint =
       fullPath +
@@ -387,7 +410,7 @@ function app(configdata, enclosingHtmlDivElement) {
       throw new Error("Ungültige Proxy-Antwort (content fehlt). ");
     }
 
-    return proxyData.content;
+    return { content: proxyData.content, lastModified: lastModified };
   }
 
   // ── CSV laden & parsen ────────────────────────────────────────────────────────
@@ -424,6 +447,8 @@ function app(configdata, enclosingHtmlDivElement) {
         // UI aufbauen
         buildFilterOptions();
         applyFilter();
+        renderWeitereInfos(configdata);
+        renderMethodikbox(configdata);
 
         setTimeout(() => hide("#app-loading"), 200);
         ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
@@ -450,7 +475,9 @@ function app(configdata, enclosingHtmlDivElement) {
         `CSV ${year} wird heruntergeladen (kann einige Sekunden dauern) …`;
 
       // CSV über den lokalen Proxy laden (CORS-Workaround)
-      const csvText = await fetchCsvText(url);
+      var fetched = await fetchCsvText(url);
+      var csvText = fetched.content;
+      var lastModified = fetched.lastModified;
       setBar(55);
       setBar(70);
 
@@ -478,6 +505,14 @@ function app(configdata, enclosingHtmlDivElement) {
       // Im globalen Cache speichern
       window._odas_cachedBussgelderDataMap[year] = allData;
 
+      if (lastModified) {
+        var badge = document.getElementById("bg-datenstand");
+        if (badge) {
+          badge.textContent = "CSV aktualisiert: " + new Date(lastModified).toLocaleDateString("de-DE");
+          document.getElementById("bg-datenstand-row").classList.remove("d-none");
+        }
+      }
+
       el.querySelector("#loading-text").textContent =
         `✓ ${fmt(allData.length)} Datensätze geladen.`;
       setBar(95);
@@ -491,6 +526,8 @@ function app(configdata, enclosingHtmlDivElement) {
       // UI aufbauen
       buildFilterOptions();
       applyFilter();
+      renderWeitereInfos(configdata);
+      renderMethodikbox(configdata);
 
       setTimeout(() => hide("#app-loading"), 400);
       ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
@@ -572,6 +609,10 @@ function app(configdata, enclosingHtmlDivElement) {
     el.querySelector("#kpi-summe").textContent = fmtEur(summe);
     el.querySelector("#kpi-avg").textContent = fmtEur(avg);
     el.querySelector("#kpi-orte").textContent = fmt(orte);
+    el.querySelector("#bg-kpi-kontext-1").innerHTML = kpiContext(configdata.kpiKontext1, "1");
+    el.querySelector("#bg-kpi-kontext-2").innerHTML = kpiContext(configdata.kpiKontext2, "2");
+    el.querySelector("#bg-kpi-kontext-3").innerHTML = kpiContext(configdata.kpiKontext3, "3");
+    el.querySelector("#bg-kpi-kontext-4").innerHTML = kpiContext(configdata.kpiKontext4, "4");
   }
 
   // ── Charts ────────────────────────────────────────────────────────────────────
@@ -781,6 +822,59 @@ function app(configdata, enclosingHtmlDivElement) {
         });
       });
     });
+  }
+
+
+  /* ── Schale 4: KPI Kontext ── */
+  function kpiContext(kontext, id) {
+    var text = String(kontext || "").trim();
+    if (!text) return "";
+    var targetId = "bg-kpi-kontext-" + id;
+    return (
+      '<button class="bg-kpi-info-toggle collapsed" type="button" ' +
+      'data-bs-toggle="collapse" data-bs-target="#' + targetId + '" ' +
+      'aria-expanded="false" aria-controls="' + targetId + '" ' +
+      'aria-label="Erklärung zu diesem Wert">' +
+      '<span class="bg-kpi-info-icon" aria-hidden="true">ⓘ</span>' +
+      "</button>" +
+      '<div id="' + targetId + '" class="collapse">' +
+      '<div class="bg-kpi-kontext">' + escapeHtml(text) + "</div>" +
+      "</div>"
+    );
+  }
+
+  /* ── Schale 4: Methodikbox ── */
+  function renderMethodikbox(cfg) {
+    var hinweis = ((cfg && cfg.datenquelleHinweis) || "").trim();
+    var stand = ((cfg && cfg.datenStand) || "").trim();
+    if (!hinweis && !stand) return;
+    var standHtml = stand
+      ? '<p class="text-muted small mb-2">' + escapeHtml(stand) + "</p>"
+      : "";
+    el.querySelector("#bg-methodik-section").innerHTML =
+      '<section class="bg-methodik mt-3">' +
+      '<button class="bg-methodik-toggle collapsed" type="button" ' +
+      'data-bs-toggle="collapse" data-bs-target="#bg-methodik-body" ' +
+      'aria-expanded="false" aria-controls="bg-methodik-body">' +
+      '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
+      '<span class="bg-methodik-chevron" aria-hidden="true">&#9662;</span>' +
+      "</button>" +
+      '<div id="bg-methodik-body" class="collapse">' +
+      '<div class="bg-methodik-content">' +
+      standHtml +
+      hinweis +
+      "</div></div></section>";
+  }
+
+  function renderWeitereInfos(configdata) {
+    var links = (configdata.weiterfuehrendeLinks || "").trim();
+    if (!links) return;
+    el.querySelector("#bg-weitere-infos-section").innerHTML =
+      '<section class="bg-weitere-infos mt-4">' +
+      '<h2 class="h5 mb-3">Weitere Informationen</h2>' +
+      '<div class="bg-weitere-infos-content">' +
+      links +
+      "</div></section>";
   }
 
   // ── Event-Listener ────────────────────────────────────────────────────────────

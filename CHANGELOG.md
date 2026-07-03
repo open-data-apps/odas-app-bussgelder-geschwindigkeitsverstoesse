@@ -1,5 +1,14 @@
 # Changelog
 
+## 03.07.2026 (Version 1.1.0)
+
+- **FEATURE**: Schale 4 – escapeHtml(), renderWeitereInfos(), Datenfrische via HTTP Last-Modified
+- **ENH**: Datenfrische-Indikator liest Last-Modified-Header der CSV-Datei aus
+- **ENH**: Weiterführende Links konfigurierbar (opendata.bonn.de, TBNR-Katalog)
+- **ENH**: Für-wen-Abschnitt in der Beschreibung hinzugefügt
+- **ENH**: CSS-Präfix `bg-` für app-spezifische Styles eingeführt
+- **ENH**: escapeHtml()-Hilfsfunktion für sicheres HTML-Rendering von Textfeldern
+
 ## 31.03.2026 (Version 2.0.0)
 
 - **FEATURE**: Implementierung als spezifische Bußgelder-App für Stadt Bonn
