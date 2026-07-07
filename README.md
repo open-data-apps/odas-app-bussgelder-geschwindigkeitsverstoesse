@@ -73,7 +73,9 @@ App läuft auf http://localhost:8089 (Konfiguration wird lokal geladen).
 
 | Parameter      | Beschreibung                                        | Pflicht |
 | -------------- | --------------------------------------------------- | ------- |
-| `apiurl`       | Basis-URL des Open-Data-Datensatzes / der Ressource | ja      |
+| `csvQuelle2021` | CSV-URL der Geschwindigkeitsverstöße für 2021          | ja      |
+| `csvQuelle2022` | CSV-URL der Geschwindigkeitsverstöße für 2022          | ja      |
+| `csvQuelle2023` | CSV-URL der Geschwindigkeitsverstöße für 2023          | ja      |
 | `urlDaten`     | URL zur Datensatz-Seite im ODP                      | ja      |
 | `titel`        | Anzeigetitel der App                                | ja      |
 | `seitentitel`  | Browser-Tab-Titel                                   | ja      |

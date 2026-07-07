@@ -9,15 +9,19 @@
   "kurzbeschreibung": "Interaktive Analyse von Bußgeldern und Geschwindigkeitsverstößen der Stadt Bonn mit Filterung, Auswertung und Visualisierung.",
   "beschreibung": [
     "_multiline_",
-    "Diese App bietet einen umfassenden Überblick über Bußgelder und Geschwindigkeitsverstöße in Bonn.",
-    "Die Daten werden aus dem Open Data Portal der Stadt Bonn bezogen und in einer interaktiven Tabelle mit Filterfunktion dargestellt.",
-    "Zusätzlich gibt es KPI-Kacheln (Anzahl Verstöße, Gesamtbußgelder, Durchschnittswert, Anzahl Messpunkte) und Visualisierungen:",
-    "- Zeitliche Verteilung der Verstöße nach Monat mit Overlay der Bußgeldsummen",
-    "- Top 8 Verstoßkategorien im Donut-Chart",
-    "- Umfangreiche Seite-für-Seite Tabellenansicht mit Pagination",
-    "Die Daten umfassen die Jahre 2021, 2022 und 2023.",
-    "Format: CSV mit Semikolon-Trennzeichen und Windows-1252 Encoding.",
-    "Der Datenabruf erfolgt über einen lokalen Proxy-Endpunkt, um CORS-Fehler zu vermeiden."
+    "<p>Diese App bereitet Bußgelder und Geschwindigkeitsverstöße im fließenden Verkehr übersichtlich auf.</p>",
+    "<p>Jahres- und Monatsdaten lassen sich filtern, vergleichen und in Diagrammen sowie Tabellen nachvollziehen.</p>",
+    "<h3>Inhalte</h3>",
+    "<p>Die App zeigt Fallzahlen, Summen, Tatbestände und zeitliche Entwicklungen rund um Geschwindigkeitsverstöße. Ergänzende Kennzahlen helfen dabei, die Größenordnung einzelner Jahre oder Monate schnell einzuordnen.</p>",
+    "<h3>Nutzung</h3>",
+    "<p>Nutzen Sie Filter und Auswertungen, um bestimmte Zeiträume, Tatbestände oder Summen zu betrachten. Die Visualisierung dient der transparenten Orientierung und nicht der Bewertung einzelner Verfahren.</p>",
+    "<h3>Für wen ist diese App?</h3>",
+    "<p>Die App richtet sich an Bürger:innen, Verwaltung, Kommunalpolitik und Medien, die Verkehrsüberwachung datenbasiert nachvollziehen möchten. Besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+    "<h3>Datenquelle</h3>",
+    "<p>Die Daten stammen aus offenen CSV-Dateien der Stadt Bonn und werden in der App zusammengeführt und ausgewertet.</p>",
+    "<ul><li><strong>Open Data Portal:</strong> <a href=\"https://opendata.bonn.de/\" target=\"_blank\" rel=\"noopener\">Open Data Bonn</a></li><li><strong>Ressourcen:</strong> <a href=\"https://opendata.bonn.de/sites/default/files/\" target=\"_blank\" rel=\"noopener\">CSV-Dateien der Stadt Bonn</a></li></ul>",
+    "<h3>Open Data App Store</h3>",
+    "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit vergleichbaren kommunalen Bußgeld- oder Verkehrsdatensätzen betrieben werden.</p>"
   ],
   "tags-funktion": [
     "Datenanalyse",
@@ -108,38 +112,19 @@
       },
       "default": [
         "_multiline_",
-        "## Über diese App",
-        "",
-        "Diese App bietet einen umfassenden Überblick über Bußgelder und Geschwindigkeitsverstöße im fließenden Verkehr der Stadt Bonn.",
-        "Die Daten umfassen die Jahre 2021, 2022 und 2023 und werden monatlich aktualisiert.",
-        "",
-        "## Für wen ist diese App?",
-        "",
-        "Diese App analysiert Geschwindigkeitsverstöße und Bußgelder der Stadt Bonn. Sie richtet sich an Journalist:innen, Verkehrsforscher:innen und Bürger:innen, die Transparenz über Tempokontrollen erhalten möchten.",
-        "",
-        "## Funktionen",
-        "",
-        "- **KPI-Kacheln**: Gesamtanzahl Verstöße, Gesamtbußgelder, Durchschnittsbußgeld, Anzahl unterschiedlicher Messpunkte",
-        "- **Monatliche Auswertung**: Zeitreihen-Diagramm mit Vergleich von Anzahl Verstöße und Bußgeldsummen",
-        "- **Top-Kategorien**: Donut-Chart mit den 8 häufigsten Verstoßarten",
-        "- **Filter**: Nach Tatort (Freitext), Verstoßkategorie und Mindestbußgeld",
-        "- **Detailtabelle**: Alle Datensätze im Überblick, paginiert mit 50 Einträgen pro Seite",
-        "- **Jahresumschaltung**: Datensätze der Jahre 2021, 2022, 2023",
-        "",
-        "## Datenquelle",
-        "",
-        "- **Open Data Portal:** <a href=\"https://opendata.bonn.de\" target=\"_blank\">opendata.bonn.de</a>",
-        "- **Datensatz:** <a href=\"{{appinstanz.urlDaten}}\" target=\"_blank\">Bußgelder &amp; Geschwindigkeitsverstöße</a>",
-        "- **Ressourcen:** <a href=\"{{appinstanz.apiurl}}\" target=\"_blank\">CSV-Dateien (2021–2023)</a>",
-        "",
-        "Lizenz: CC Zero (gemeinfrei)",
-        "",
-        "## Nutzung",
-        "",
-        "- Wählen Sie über das Dropdown das gewünschte Datenjahr (2021, 2022 oder 2023)",
-        "- Nutzen Sie die Filter, um nach Tatort, Verstoßkategorie oder Mindestbußgeld zu filtern",
-        "- Die KPI-Kacheln zeigen die wichtigsten Kennzahlen auf einen Blick",
-        "- In der Detailtabelle können Sie alle Verstöße einsehen und durchblättern"
+        "<p>Diese App bereitet Bußgelder und Geschwindigkeitsverstöße im fließenden Verkehr übersichtlich auf.</p>",
+        "<p>Jahres- und Monatsdaten lassen sich filtern, vergleichen und in Diagrammen sowie Tabellen nachvollziehen.</p>",
+        "<h3>Inhalte</h3>",
+        "<p>Die App zeigt Fallzahlen, Summen, Tatbestände und zeitliche Entwicklungen rund um Geschwindigkeitsverstöße. Ergänzende Kennzahlen helfen dabei, die Größenordnung einzelner Jahre oder Monate schnell einzuordnen.</p>",
+        "<h3>Nutzung</h3>",
+        "<p>Nutzen Sie Filter und Auswertungen, um bestimmte Zeiträume, Tatbestände oder Summen zu betrachten. Die Visualisierung dient der transparenten Orientierung und nicht der Bewertung einzelner Verfahren.</p>",
+        "<h3>Für wen ist diese App?</h3>",
+        "<p>Die App richtet sich an Bürger:innen, Verwaltung, Kommunalpolitik und Medien, die Verkehrsüberwachung datenbasiert nachvollziehen möchten. Besondere Datenkenntnisse sind für die Nutzung nicht erforderlich.</p>",
+        "<h3>Datenquelle</h3>",
+        "<p>Die Daten stammen aus offenen CSV-Dateien der Stadt Bonn und werden in der App zusammengeführt und ausgewertet.</p>",
+"<ul><li><strong>Open Data Portal:</strong> <a href=\"https://opendata.bonn.de/\" target=\"_blank\" rel=\"noopener\">Open Data Bonn</a></li><li><strong>Ressourcen:</strong><ul><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2023 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2022 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2021 (CSV)</a></li></ul></li></ul>",
+        "<h3>Open Data App Store</h3>",
+        "<p>Diese App ist für den Open Data App Store vorbereitet und kann mit vergleichbaren kommunalen Bußgeld- oder Verkehrsdatensätzen betrieben werden.</p>"
       ],
       "erforderlich": "ja"
     },
@@ -206,15 +191,31 @@
       "default": "(C) Copyright {{jahr}} | App & Daten: {{odp.anbieter.name}} | App-Entwickler: {{app.developer.name}} | ODAS: {{odas.betreiber.name}}",
       "erforderlich": "ja"
     },
-    "apiurl": {
-      "label": "URL zu den Daten",
-      "hilfe": "Von dieser URL zum Datensatz werden die Ressourcen bezogen",
+    "csvQuelle2021": {
+      "label": "CSV-Quelle 2021",
+      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2021",
       "format": {
-        "typ": "url",
-        "laenge": 255
+        "typ": "url"
       },
-      "default": "",
-      "beispiel": "",
+      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+      "erforderlich": "ja"
+    },
+    "csvQuelle2022": {
+      "label": "CSV-Quelle 2022",
+      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2022",
+      "format": {
+        "typ": "url"
+      },
+      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+      "erforderlich": "ja"
+    },
+    "csvQuelle2023": {
+      "label": "CSV-Quelle 2023",
+      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2023",
+      "format": {
+        "typ": "url"
+      },
+      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
       "erforderlich": "ja"
     },
     "sprache": {
@@ -235,7 +236,7 @@
       "format": {
         "typ": "markdown"
       },
-      "default": "",
+      "default": "<ul><li><a href=\"https://opendata.bonn.de/\" target=\"_blank\" rel=\"noopener\">Open Data Bonn</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2023 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2022 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2021 (CSV)</a></li><li><a href=\"https://www.bonn.de/\" target=\"_blank\" rel=\"noopener\">Stadt Bonn</a></li></ul>",
       "erforderlich": "nein"
     },
     "datenquelleHinweis": {
@@ -244,7 +245,7 @@
       "format": {
         "typ": "markdown"
       },
-      "default": "<p>Die Daten stammen aus monatlich aktualisierten CSV-Dateien der Stadt Bonn (opendata.bonn.de). Die TBNR-Codes (Tatbestandsnummern) werden über den <a href=\"https://www.kba.de/DE/Themen/ZentraleRegister/FAER/BT_KAT_OWI/bt_kat_owi_node.html\" target=\"_blank\">bundeseinheitlichen Tatbestandskatalog</a> entschlüsselt. Die CSV-Dateien werden mit Windows-1252-Kodierung eingelesen und Mojibake-korrigiert.</p>",
+      "default": "<p>Die Daten stammen aus monatlichen CSV-Dateien der Stadt Bonn und werden in der App zusammengeführt. Tatbestände und Summen werden aus den veröffentlichten Tabellenwerten abgeleitet; die App bewertet keine Einzelfälle und ersetzt keine amtliche Statistikveröffentlichung.</p>",
       "erforderlich": "nein"
     },
     "datenStand": {
@@ -254,7 +255,7 @@
         "typ": "string",
         "laenge": 60
       },
-      "default": "",
+      "default": "Stand: abhängig von den monatlichen CSV-Veröffentlichungen der Stadt Bonn",
       "erforderlich": "nein"
     },
     "kpiKontext1": {
@@ -264,7 +265,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Gesamtzahl der erfassten Geschwindigkeitsverstöße im ausgewählten Zeitraum. Jeder Verstoß wurde messtechnisch dokumentiert.",
       "erforderlich": "nein"
     },
     "kpiKontext2": {
@@ -274,7 +275,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Summe aller verhängten Bußgelder in Euro. Zeigt das finanzielle Gesamtvolumen der geahndeten Geschwindigkeitsüberschreitungen.",
       "erforderlich": "nein"
     },
     "kpiKontext3": {
@@ -284,7 +285,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Durchschnittliche Höhe eines Bußgeldes. Niedrige Werte deuten auf viele geringe, hohe Werte auf massive Überschreitungen hin.",
       "erforderlich": "nein"
     },
     "kpiKontext4": {
@@ -294,7 +295,7 @@
         "typ": "string",
         "laenge": 250
       },
-      "default": "",
+      "default": "Anzahl der verschiedenen Messstellen. Zeigt die räumliche Abdeckung der Verkehrsüberwachung im ausgewählten Gebiet.",
       "erforderlich": "nein"
     }
   }

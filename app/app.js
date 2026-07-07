@@ -11,7 +11,9 @@
  *
  * config.json:
  * {
- *   "apiUrl": "https://opendata.bonn.de/sites/default/files/",
+ *   "csvQuelle2023": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+ *   "csvQuelle2022": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+ *   "csvQuelle2021": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
  *   "titel":  "Bußgelder & Geschwindigkeitsverstöße"
  * }
  *
@@ -40,9 +42,9 @@ function app(configdata, enclosingHtmlDivElement) {
     (configdata && configdata.titel) || "Bußgelder & Geschwindigkeitsverstöße";
 
   const CSV_SOURCES = {
-    2023: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
-    2022: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
-    2021: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+    2023: (configdata && configdata.csvQuelle2023) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+    2022: (configdata && configdata.csvQuelle2022) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+    2021: (configdata && configdata.csvQuelle2021) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
   };
 
   // Bundeseinheitlicher Tatbestandskatalog – wichtigste Codes
@@ -181,28 +183,32 @@ function app(configdata, enclosingHtmlDivElement) {
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#2563eb,#1e40af)">
             <span class="kpi-ico">⚡</span>
-            <div class="kpi-val" id="kpi-anzahl">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-1"></div>
+            <div class="kpi-val" id="kpi-anzahl">–</div>
+            ${kpiContext(configdata.kpiKontext1, "1")}
             <div class="kpi-lbl">Verstöße gesamt</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#dc2626,#9b1c1c)">
             <span class="kpi-ico">💶</span>
-            <div class="kpi-val" id="kpi-summe">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-2"></div>
+            <div class="kpi-val" id="kpi-summe">–</div>
+            ${kpiContext(configdata.kpiKontext2, "2")}
             <div class="kpi-lbl">Bußgelder gesamt (€)</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#d97706,#92400e)">
             <span class="kpi-ico">📊</span>
-            <div class="kpi-val" id="kpi-avg">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-3"></div>
+            <div class="kpi-val" id="kpi-avg">–</div>
+            ${kpiContext(configdata.kpiKontext3, "3")}
             <div class="kpi-lbl">Ø Bußgeld (€)</div>
           </div>
         </div>
         <div class="col-6 col-lg-3">
           <div class="kpi-card" style="background:linear-gradient(135deg,#059669,#064e3b)">
             <span class="kpi-ico">📍</span>
-            <div class="kpi-val" id="kpi-orte">–</div>\n            <div class="bg-kpi-kontext-slot" id="bg-kpi-kontext-4"></div>
+            <div class="kpi-val" id="kpi-orte">–</div>
+            ${kpiContext(configdata.kpiKontext4, "4")}
             <div class="kpi-lbl">Messpunkte (Orte)</div>
           </div>
         </div>
@@ -430,10 +436,12 @@ function app(configdata, enclosingHtmlDivElement) {
     show("#app-loading");
 
     // Falls Daten bereits im Cache liegen, sofort laden
-    window._odas_cachedBussgelderDataMap = window._odas_cachedBussgelderDataMap || {};
+    window._odas_cachedBussgelderDataMap =
+      window._odas_cachedBussgelderDataMap || {};
     if (window._odas_cachedBussgelderDataMap[year]) {
       allData = window._odas_cachedBussgelderDataMap[year];
-      el.querySelector("#loading-text").textContent = `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
+      el.querySelector("#loading-text").textContent =
+        `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
       setBar(100);
 
       try {
@@ -508,8 +516,12 @@ function app(configdata, enclosingHtmlDivElement) {
       if (lastModified) {
         var badge = document.getElementById("bg-datenstand");
         if (badge) {
-          badge.textContent = "CSV aktualisiert: " + new Date(lastModified).toLocaleDateString("de-DE");
-          document.getElementById("bg-datenstand-row").classList.remove("d-none");
+          badge.textContent =
+            "CSV aktualisiert: " +
+            new Date(lastModified).toLocaleDateString("de-DE");
+          document
+            .getElementById("bg-datenstand-row")
+            .classList.remove("d-none");
         }
       }
 
@@ -609,10 +621,6 @@ function app(configdata, enclosingHtmlDivElement) {
     el.querySelector("#kpi-summe").textContent = fmtEur(summe);
     el.querySelector("#kpi-avg").textContent = fmtEur(avg);
     el.querySelector("#kpi-orte").textContent = fmt(orte);
-    el.querySelector("#bg-kpi-kontext-1").innerHTML = kpiContext(configdata.kpiKontext1, "1");
-    el.querySelector("#bg-kpi-kontext-2").innerHTML = kpiContext(configdata.kpiKontext2, "2");
-    el.querySelector("#bg-kpi-kontext-3").innerHTML = kpiContext(configdata.kpiKontext3, "3");
-    el.querySelector("#bg-kpi-kontext-4").innerHTML = kpiContext(configdata.kpiKontext4, "4");
   }
 
   // ── Charts ────────────────────────────────────────────────────────────────────
@@ -824,7 +832,6 @@ function app(configdata, enclosingHtmlDivElement) {
     });
   }
 
-
   /* ── Schale 4: KPI Kontext ── */
   function kpiContext(kontext, id) {
     var text = String(kontext || "").trim();
@@ -832,13 +839,21 @@ function app(configdata, enclosingHtmlDivElement) {
     var targetId = "bg-kpi-kontext-" + id;
     return (
       '<button class="bg-kpi-info-toggle collapsed" type="button" ' +
-      'data-bs-toggle="collapse" data-bs-target="#' + targetId + '" ' +
-      'aria-expanded="false" aria-controls="' + targetId + '" ' +
+      'data-bs-toggle="collapse" data-bs-target="#' +
+      targetId +
+      '" ' +
+      'aria-expanded="false" aria-controls="' +
+      targetId +
+      '" ' +
       'aria-label="Erklärung zu diesem Wert">' +
       '<span class="bg-kpi-info-icon" aria-hidden="true">ⓘ</span>' +
       "</button>" +
-      '<div id="' + targetId + '" class="collapse">' +
-      '<div class="bg-kpi-kontext">' + escapeHtml(text) + "</div>" +
+      '<div id="' +
+      targetId +
+      '" class="collapse">' +
+      '<div class="bg-kpi-kontext">' +
+      escapeHtml(text) +
+      "</div>" +
       "</div>"
     );
   }

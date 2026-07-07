@@ -20,7 +20,7 @@
 .bg-methodik-toggle[aria-expanded="true"] .bg-methodik-chevron { transform: rotate(180deg); }
 .bg-methodik-content { border-top: 1px solid var(--bs-border-color); padding: 1rem; }
 .bg-methodik-content p:last-child { margin-bottom: 0; }
-.bg-kpi-info-toggle { border: 0; background: transparent; color: var(--bs-secondary-color); width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 0; }
-.bg-kpi-info-toggle:hover, .bg-kpi-info-toggle:focus-visible, .bg-kpi-info-toggle:not(.collapsed) { color: var(--bs-primary); background: rgba(var(--bs-primary-rgb), 0.08); outline: none; }
+.bg-kpi-info-toggle { border: 0; background: transparent; color: rgba(255,255,255,0.55); width: 1.75rem; height: 1.75rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 0; }
+.bg-kpi-info-toggle:hover, .bg-kpi-info-toggle:focus-visible, .bg-kpi-info-toggle:not(.collapsed) { color: #fff; background: rgba(255,255,255,0.15); outline: none; }
 .bg-kpi-info-icon { font-size: 1rem; line-height: 1; }
-.bg-kpi-kontext { margin-top: 0.5rem; color: var(--bs-secondary-color); font-size: 0.875rem; line-height: 1.4; }
+.bg-kpi-kontext { margin-top: 0.5rem; color: rgba(255,255,255,0.85); font-size: 0.875rem; line-height: 1.4; }
