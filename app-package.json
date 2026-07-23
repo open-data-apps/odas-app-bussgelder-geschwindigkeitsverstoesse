@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Interaktive Analyse von Bußgeldern und Geschwindigkeitsverstößen der Stadt Bonn mit Filterung, Auswertung und Visualisierung.",
@@ -177,6 +177,19 @@
         "laenge": 50
       },
       "default": "(C) Copyright {{jahr}} | App & Daten: {{odp.anbieter.name}} | App-Entwickler: {{app.developer.name}} | ODAS: {{odas.betreiber.name}}",
+      "erforderlich": "ja"
+    },
+    "proxyAktiv": {
+      "label": "ODAS-Proxy aktivieren",
+      "hilfe": "Mit ja werden Datenabrufe über den ODAS-Proxy gesendet. Die konfigurierte Datenquelle (opendata.bonn.de) sendet keinen CORS-Header, deshalb ist ja hier der Standard. Nur mit einer CORS-freigegebenen Datenquelle kann auf nein umgestellt und die App standalone betrieben werden.",
+      "default": "ja",
+      "format": {
+        "typ": "dropdown",
+        "optionen": [
+          "nein",
+          "ja"
+        ]
+      },
       "erforderlich": "ja"
     },
     "csvQuelle2021": {

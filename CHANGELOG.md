@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 - 2026-07-23
+
+- **ENH:** Datenabruf auf den Schalter `proxyAktiv` umgestellt; direkte Abrufe sind der Standard, der ODAS-Proxy wird nur noch bei `ja` verwendet
+- **ENH:** Einfachen Standalone-Betrieb hinter Traefik mit derselben `odas-config/config.json` wie in der Entwicklung ergänzt
+- **ENH:** Traefik-Anbindung auf das externe Netzwerk `proxynet`, den EntryPoint `websecure` und den Zertifikatsresolver `letsencrypt` festgelegt
+- **FIX:** Proxy-Basispfad funktioniert jetzt auch bei URLs mit `index.html`; der Ziel-Pfad wird URL-kodiert
+- **DOC:** `proxyAktiv` bleibt auf `ja` voreingestellt, weil opendata.bonn.de keinen CORS-Header sendet; Standalone-Betrieb erfordert eine CORS-freigegebene Datenquelle
+- **DOC:** Start über `STANDALONE=true make up` dokumentiert
+
 ## 03.07.2026 (Version 1.1.0)
 
 - **FEATURE**: Schale 4 – escapeHtml(), renderWeitereInfos(), Datenfrische via HTTP Last-Modified
