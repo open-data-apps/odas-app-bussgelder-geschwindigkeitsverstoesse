@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0 - 2026-07-31
+- DOC: Standalone-Anleitung individualisiert (F-10) - `proxyAktiv` ist auf `nein` zu
+  **setzen** statt zu belassen; Austausch der CSV-Quellen als eigener Schritt ergaenzt
+- DOC: Standalone als eingeschraenkt gekennzeichnet
+
 ## 1.6.0 - 2026-07-31
 - CHG: Platzhalter-Titel in der lokalen Konfiguration durch den echten App-Titel ersetzt
 
