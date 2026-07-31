@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.6.0 - 2026-07-31
+- CHG: Platzhalter-Titel in der lokalen Konfiguration durch den echten App-Titel ersetzt
+
 ## 1.5.0 - 2026-07-31
 - FIX: escapeHtml() von der DOM- auf die Regex-Variante umgestellt (F-08); die alte Fassung maskierte " und ' nicht
 - FIX: Maskierung auf alle Daten- und Attributkontexte ausgedehnt (F-08)
