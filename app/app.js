@@ -99,10 +99,13 @@ async function fetchOdasJson(targetUrl, configdata = {}) {
   return JSON.parse(await fetchOdasResource(targetUrl, configdata));
 }
 
-function escapeHtml(str) {
-  var div = document.createElement("div");
-  div.appendChild(document.createTextNode(str));
-  return div.innerHTML;
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function app(configdata, enclosingHtmlDivElement) {
@@ -208,7 +211,7 @@ function app(configdata, enclosingHtmlDivElement) {
       <!-- ── Kopfzeile ── -->
       <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
         <div>
-          <h5 class="fw-bold mb-1">🚦 ${TITLE}</h5>
+          <h5 class="fw-bold mb-1">🚦 ${escapeHtml(TITLE)}</h5>
           <div class="text-muted small">
             Quelle: Stadt Bonn – Ordnungsamt &nbsp;·&nbsp;
             <a href="https://opendata.bonn.de" target="_blank" rel="noopener" class="text-muted">opendata.bonn.de</a>
@@ -818,10 +821,10 @@ function app(configdata, enclosingHtmlDivElement) {
                 ? "text-warning fw-semibold"
                 : "";
         return `<tr>
-        <td class="text-nowrap">${r.TATTAG}</td>
-        <td class="text-nowrap text-muted">${formatTime(r.TATZEIT)}</td>
-        <td class="tbl-tatort" title="${r.TATORT}">${r.TATORT}</td>
-        <td><span class="badge bg-secondary badge-tbnr">${tbnrLabel(r.TATBESTANDBE_TBNR)}</span></td>
+        <td class="text-nowrap">${escapeHtml(r.TATTAG)}</td>
+        <td class="text-nowrap text-muted">${escapeHtml(formatTime(r.TATZEIT))}</td>
+        <td class="tbl-tatort" title="${escapeHtml(r.TATORT)}">${escapeHtml(r.TATORT)}</td>
+        <td><span class="badge bg-secondary badge-tbnr">${escapeHtml(tbnrLabel(r.TATBESTANDBE_TBNR))}</span></td>
         <td class="text-end ${bClass}">${fmtEur(b)}</td>
       </tr>`;
       })
