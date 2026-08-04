@@ -506,7 +506,7 @@ function app(configdata, enclosingHtmlDivElement) {
           "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
         );
         await loadScript(
-          "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+          "https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js",
         );
 
         // UI aufbauen
@@ -588,7 +588,7 @@ function app(configdata, enclosingHtmlDivElement) {
 
       // Chart.js laden
       await loadScript(
-        "https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js",
+        "https://cdn.jsdelivr.net/npm/chart.js@4.4.9/dist/chart.umd.min.js",
       );
       setBar(100);
 
