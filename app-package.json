@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "version": "1.13.0",
+  "version": "1.14.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Interaktive Analyse von Bußgeldern und Geschwindigkeitsverstößen der Stadt Bonn mit Filterung, Auswertung und Visualisierung.",
@@ -145,8 +145,7 @@
       },
       "default": [
         "_multiline_",
-        "Alle Daten sind geschützt.",
-        "<h3>Beim Aufruf kontaktierte Drittanbieter</h3><p>Beim Aufruf dieser App werden Bibliotheken bzw. Kartendienste von folgenden externen Servern geladen. Dabei werden IP-Adresse und User-Agent der Besucher:innen an diese Anbieter übertragen:</p><ul><li><strong>cdnjs.cloudflare.com</strong> — PapaParse (CSV-Parsing)</li></ul>"
+        "Alle Daten sind geschützt."
       ],
       "erforderlich": "ja"
     },
