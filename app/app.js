@@ -503,7 +503,7 @@ function app(configdata, enclosingHtmlDivElement) {
 
       try {
         await loadScript(
-          "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
+          "vendor/papaparse/papaparse.min.js",
         );
         await loadScript(
           "vendor/chartjs/chart.umd.min.js",
@@ -533,7 +533,7 @@ function app(configdata, enclosingHtmlDivElement) {
     try {
       // PapaParse dynamisch laden
       await loadScript(
-        "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
+        "vendor/papaparse/papaparse.min.js",
       );
       setBar(15);
       el.querySelector("#loading-text").textContent =
