@@ -571,13 +571,13 @@ function app(configdata, enclosingHtmlDivElement) {
       window._odas_cachedBussgelderDataMap[year] = allData;
 
       if (lastModified) {
-        var badge = document.getElementById("bg-datenstand");
+        var badge = enclosingHtmlDivElement.querySelector("#bg-datenstand");
         if (badge) {
           badge.textContent =
             "CSV aktualisiert: " +
             new Date(lastModified).toLocaleDateString("de-DE");
-          document
-            .getElementById("bg-datenstand-row")
+          enclosingHtmlDivElement
+            .querySelector("#bg-datenstand-row")
             .classList.remove("d-none");
         }
       }
