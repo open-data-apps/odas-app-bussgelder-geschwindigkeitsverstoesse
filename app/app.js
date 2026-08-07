@@ -99,6 +99,8 @@ async function fetchOdasJson(targetUrl, configdata = {}) {
   return JSON.parse(await fetchOdasResource(targetUrl, configdata));
 }
 
+let bgInstanzZaehler = 0;
+
 function escapeHtml(value = "") {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -109,6 +111,7 @@ function escapeHtml(value = "") {
 }
 
 function app(configdata, enclosingHtmlDivElement) {
+  const bgUid = "i" + ++bgInstanzZaehler;
   // ── Konfiguration ─────────────────────────────────────────────────────────────
   const TITLE =
     (configdata && configdata.titel) || "Bußgelder & Geschwindigkeitsverstöße";
@@ -893,7 +896,7 @@ function app(configdata, enclosingHtmlDivElement) {
   function kpiContext(kontext, id) {
     var text = String(kontext || "").trim();
     if (!text) return "";
-    var targetId = "bg-kpi-kontext-" + id;
+    var targetId = "bg-kpi-kontext-" + id + "-" + bgUid;
     return (
       '<button class="bg-kpi-info-toggle collapsed" type="button" ' +
       'data-bs-toggle="collapse" data-bs-target="#' +
@@ -926,12 +929,12 @@ function app(configdata, enclosingHtmlDivElement) {
     el.querySelector("#bg-methodik-section").innerHTML =
       '<section class="bg-methodik mt-3">' +
       '<button class="bg-methodik-toggle collapsed" type="button" ' +
-      'data-bs-toggle="collapse" data-bs-target="#bg-methodik-body" ' +
-      'aria-expanded="false" aria-controls="bg-methodik-body">' +
+      'data-bs-toggle="collapse" data-bs-target="#bg-methodik-body-' + bgUid + '" ' +
+      'aria-expanded="false" aria-controls="bg-methodik-body-' + bgUid + '">' +
       '<h2 class="h5 mb-0">Methodik &amp; Datenquelle</h2>' +
       '<span class="bg-methodik-chevron" aria-hidden="true">&#9662;</span>' +
       "</button>" +
-      '<div id="bg-methodik-body" class="collapse">' +
+      '<div id="bg-methodik-body-' + bgUid + '" class="collapse">' +
       '<div class="bg-methodik-content">' +
       standHtml +
       hinweis +

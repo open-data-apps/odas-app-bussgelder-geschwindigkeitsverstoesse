@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.17.0 - 2026-08-07
+- CHG: Bootstrap-Ziele instanzeindeutig (F-32): KPI-Kontext- und Methodik-Ziele (`#bg-kpi-kontext-<id>` und `#bg-methodik-body`) um eine Instanzkennung ergänzt — mehrere Instanzen derselben App auf einer Seite klappen ihre Panels unabhängig auf
+
 ## 1.16.0 - 2026-08-06
 - FIX: DOM-Zugriffe auf den App-Container gescopt (F-25)
 
