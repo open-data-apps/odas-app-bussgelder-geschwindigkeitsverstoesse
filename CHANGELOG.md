@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.19.0 - 2026-08-11
+- FIX: Veraltete Antworten verwerfen (F-44): instanzlokaler `loadToken` – `loadData(year)` startet jeden Lauf mit neuem Token und prüft nach jeder await-Grenze (Cache-Pfad, CSV-Abruf, Parser, Skript-Loads) vor jeder State-/UI-Zuweisung, ob der Lauf noch aktuell ist; ein langsamer Vorjahres-Lauf kann das gewählte Jahr nicht mehr überschreiben, und der Cache-Eintrag wird nur vom aktuellsten Lauf geschrieben
+
 ## 1.18.0 - 2026-08-11
 - FIX: XSS- und URL-Vertrag geschlossen (F-35): Fehlermeldungen `err.message` escaped; Testlink nur noch über `safeHttpUrl` (ungültiges Schema → kein Link)
 - FIX: Netzverkehr angeglichen (F-36): Vorab-Request an die CSV-Domain entfernt — bei `proxyAktiv=ja` entsteht kein direkter Request mehr; das Datenfrische-Label fällt auf die `datenStand`-Konfiguration zurück

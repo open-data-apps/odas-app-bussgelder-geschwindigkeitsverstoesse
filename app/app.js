@@ -187,6 +187,7 @@ function app(configdata, enclosingHtmlDivElement) {
   let currentYear = "2023";
   let currentPage = 0;
   let debounce = null;
+  let loadToken = 0; // F-44: monotoner Request-Token – nur der aktuellste Lauf schreibt State/UI
   let chartMonat = null;
   let chartTbnr = null;
   const PAGE_SIZE = 50;
@@ -484,6 +485,10 @@ function app(configdata, enclosingHtmlDivElement) {
     const url = CSV_SOURCES[year];
     if (!url) return;
 
+    // F-44: monotoner Request-Token – überholt ein neuerer loadData-Lauf
+    // diesen, bricht der Lauf an der nächsten await-Grenze ab.
+    const token = ++loadToken;
+
     // UI vorbereiten
     [
       "#app-kpis",
@@ -498,6 +503,7 @@ function app(configdata, enclosingHtmlDivElement) {
     window._odas_cachedBussgelderDataMap =
       window._odas_cachedBussgelderDataMap || {};
     if (window._odas_cachedBussgelderDataMap[year]) {
+      if (token !== loadToken) return;
       allData = window._odas_cachedBussgelderDataMap[year];
       el.querySelector("#loading-text").textContent =
         `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
@@ -507,9 +513,11 @@ function app(configdata, enclosingHtmlDivElement) {
         await loadScript(
           "vendor/papaparse/papaparse.min.js",
         );
+        if (token !== loadToken) return;
         await loadScript(
           "vendor/chartjs/chart.umd.min.js",
         );
+        if (token !== loadToken) return;
 
         // UI aufbauen
         buildFilterOptions();
@@ -520,6 +528,7 @@ function app(configdata, enclosingHtmlDivElement) {
         setTimeout(() => hide("#app-loading"), 200);
         ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
       } catch (err) {
+        if (token !== loadToken) return;
         hide("#app-loading");
         show("#app-error");
         el.querySelector("#app-error").innerHTML =
@@ -537,12 +546,14 @@ function app(configdata, enclosingHtmlDivElement) {
       await loadScript(
         "vendor/papaparse/papaparse.min.js",
       );
+      if (token !== loadToken) return;
       setBar(15);
       el.querySelector("#loading-text").textContent =
         `CSV ${year} wird heruntergeladen (kann einige Sekunden dauern) …`;
 
       // CSV über den lokalen Proxy laden (CORS-Workaround)
       var fetched = await fetchCsvText(url);
+      if (token !== loadToken) return;
       var csvText = fetched.content;
       setBar(55);
       setBar(70);
@@ -558,6 +569,8 @@ function app(configdata, enclosingHtmlDivElement) {
       });
       setBar(85);
 
+      if (token !== loadToken) return;
+
       // Nur vollständige, valide Zeilen
       allData = result.data.filter(
         (r) =>
@@ -568,7 +581,8 @@ function app(configdata, enclosingHtmlDivElement) {
           !isNaN(parseInt(r.GELDBUSSE, 10)),
       );
 
-      // Im globalen Cache speichern
+      // Im globalen Cache speichern – nur vom aktuellsten Lauf.
+      if (token !== loadToken) return;
       window._odas_cachedBussgelderDataMap[year] = allData;
 
       // Datenfrische-Label: kein Vorab-Request mehr (F-36) — Fallback auf die
@@ -592,6 +606,7 @@ function app(configdata, enclosingHtmlDivElement) {
       await loadScript(
         "vendor/chartjs/chart.umd.min.js",
       );
+      if (token !== loadToken) return;
       setBar(100);
 
       // UI aufbauen
@@ -603,6 +618,7 @@ function app(configdata, enclosingHtmlDivElement) {
       setTimeout(() => hide("#app-loading"), 400);
       ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
     } catch (err) {
+      if (token !== loadToken) return;
       hide("#app-loading");
       show("#app-error");
       const u = safeHttpUrl(url);
