@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.0 - 2026-08-11
+- FIX: XSS- und URL-Vertrag geschlossen (F-35): Fehlermeldungen `err.message` escaped; Testlink nur noch über `safeHttpUrl` (ungültiges Schema → kein Link)
+- FIX: Netzverkehr angeglichen (F-36): Vorab-Request an die CSV-Domain entfernt — bei `proxyAktiv=ja` entsteht kein direkter Request mehr; das Datenfrische-Label fällt auf die `datenStand`-Konfiguration zurück
+
 ## 1.17.0 - 2026-08-07
 - CHG: Bootstrap-Ziele instanzeindeutig (F-32): KPI-Kontext- und Methodik-Ziele (`#bg-kpi-kontext-<id>` und `#bg-methodik-body`) um eine Instanzkennung ergänzt — mehrere Instanzen derselben App auf einer Seite klappen ihre Panels unabhängig auf
 

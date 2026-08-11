@@ -110,6 +110,11 @@ function escapeHtml(value = "") {
     .replace(/'/g, "&#039;");
 }
 
+function safeHttpUrl(value) {
+  const s = String(value || "").trim();
+  return /^https?:\/\//i.test(s) ? s : "";
+}
+
 function app(configdata, enclosingHtmlDivElement) {
   const bgUid = "i" + ++bgInstanzZaehler;
   // ── Konfiguration ─────────────────────────────────────────────────────────────
@@ -465,18 +470,12 @@ function app(configdata, enclosingHtmlDivElement) {
   }
 
   async function fetchCsvText(url) {
-    var lastModified = null;
-    try {
-      var headResp = await fetch(url, { method: "HEAD" });
-      lastModified = headResp.headers.get("Last-Modified");
-    } catch (e) {
-      // CORS kann HEAD blockieren → ignorieren
-    }
-
-    // CSV laden: direkt oder ueber den ODAS-Proxy (proxyAktiv)
+    // CSV laden: direkt oder ueber den ODAS-Proxy (proxyAktiv).
+    // Kein Vorab-Request an die CSV-Domain mehr (F-36); lastModified bleibt null,
+    // die Datenfrische stammt aus der datenStand-Konfiguration.
     const content = await fetchOdasResource(url, configdata);
 
-    return { content: content, lastModified: lastModified };
+    return { content: content, lastModified: null };
   }
 
   // ── CSV laden & parsen ────────────────────────────────────────────────────────
@@ -545,7 +544,6 @@ function app(configdata, enclosingHtmlDivElement) {
       // CSV über den lokalen Proxy laden (CORS-Workaround)
       var fetched = await fetchCsvText(url);
       var csvText = fetched.content;
-      var lastModified = fetched.lastModified;
       setBar(55);
       setBar(70);
 
@@ -573,12 +571,13 @@ function app(configdata, enclosingHtmlDivElement) {
       // Im globalen Cache speichern
       window._odas_cachedBussgelderDataMap[year] = allData;
 
-      if (lastModified) {
+      // Datenfrische-Label: kein Vorab-Request mehr (F-36) — Fallback auf die
+      // datenStand-Konfiguration.
+      var datenstand = ((configdata && configdata.datenStand) || "").trim();
+      if (datenstand) {
         var badge = enclosingHtmlDivElement.querySelector("#bg-datenstand");
         if (badge) {
-          badge.textContent =
-            "CSV aktualisiert: " +
-            new Date(lastModified).toLocaleDateString("de-DE");
+          badge.textContent = datenstand;
           enclosingHtmlDivElement
             .querySelector("#bg-datenstand-row")
             .classList.remove("d-none");
@@ -606,15 +605,15 @@ function app(configdata, enclosingHtmlDivElement) {
     } catch (err) {
       hide("#app-loading");
       show("#app-error");
+      const u = safeHttpUrl(url);
+      const testlink = u
+        ? ` Direkter Testlink: <a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`
+        : "";
       el.querySelector("#app-error").innerHTML =
-        "<strong>Fehler beim Laden der Daten:</strong> " +
-        err.message +
-        '<br><small class="text-muted">Bitte prüfen Sie, ob der Server CORS-Anfragen erlaubt. ' +
-        'Direkter Testlink: <a href="' +
-        url +
-        '" target="_blank" rel="noopener">' +
-        url +
-        "</a></small>";
+        `<strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}` +
+        '<br><small class="text-muted">Bitte prüfen Sie, ob der Server CORS-Anfragen erlaubt.' +
+        testlink +
+        "</small>";
     }
   }
 
