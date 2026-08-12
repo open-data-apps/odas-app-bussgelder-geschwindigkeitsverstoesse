@@ -49,6 +49,7 @@
   "instanz-config": {
     "seitentitel": {
       "label": "Seitentitel",
+      "category": "general",
       "hilfe": "Der Seitentitel wird im Browser-Tab der App angezeigt",
       "default": "Bußgelder & Geschwindigkeitsverstöße",
       "format": {
@@ -59,6 +60,7 @@
     },
     "titel": {
       "label": "Titel",
+      "category": "general",
       "hilfe": "Der Titel wird in der Titelzeile der App angezeigt",
       "default": "Bußgelder & Geschwindigkeitsverstöße",
       "format": {
@@ -69,6 +71,7 @@
     },
     "icon": {
       "label": "App-Icon",
+      "category": "general",
       "hilfe": "Das Icon wird links oben in der Titelzeile angezeigt",
       "default": "{{{odp.logo}}}",
       "format": {
@@ -80,6 +83,7 @@
     },
     "kontakt": {
       "label": "Kontakt",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Kontakt' anzeigt",
       "format": {
         "typ": "markdown"
@@ -96,6 +100,7 @@
     },
     "beschreibung": {
       "label": "Beschreibung",
+      "category": "content",
       "hilfe": "Der Text wird im Menüpunkt 'Über diese App' angezeigt",
       "format": {
         "typ": "markdown"
@@ -120,6 +125,7 @@
     },
     "impressum": {
       "label": "Impressum",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Impressum' anzeigt",
       "format": {
         "typ": "markdown"
@@ -139,6 +145,7 @@
     },
     "datenschutz": {
       "label": "Datenschutz",
+      "category": "contact-legal",
       "hilfe": "Der Text wird im Menüpunkt 'Datenschutz' anzeigt",
       "format": {
         "typ": "markdown"
@@ -153,6 +160,7 @@
     },
     "urlDaten": {
       "label": "URL zum Datensatz im ODP",
+      "category": "datasource",
       "hilfe": "Der Datensatz im Open Data Portal mit den Daten der Bußgelder & Geschwindigkeitsverstöße App",
       "format": {
         "typ": "url"
@@ -163,6 +171,7 @@
     },
     "fusszeile": {
       "label": "Fußzeile",
+      "category": "contact-legal",
       "hilfe": "Wird auf der Website unten in der Fußzeile angezeigt.",
       "format": {
         "typ": "string",
@@ -173,6 +182,7 @@
     },
     "proxyAktiv": {
       "label": "ODAS-Proxy aktivieren",
+      "category": "datasource",
       "hilfe": "Mit ja werden Datenabrufe über den ODAS-Proxy gesendet. Die konfigurierte Datenquelle (opendata.bonn.de) sendet keinen CORS-Header, deshalb ist ja hier der Standard. Nur mit einer CORS-freigegebenen Datenquelle kann auf nein umgestellt und die App standalone betrieben werden.",
       "default": "ja",
       "format": {
@@ -186,6 +196,7 @@
     },
     "csvQuelle2021": {
       "label": "CSV-Quelle 2021",
+      "category": "datasource",
       "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2021",
       "format": {
         "typ": "url"
@@ -195,6 +206,7 @@
     },
     "csvQuelle2022": {
       "label": "CSV-Quelle 2022",
+      "category": "datasource",
       "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2022",
       "format": {
         "typ": "url"
@@ -204,6 +216,7 @@
     },
     "csvQuelle2023": {
       "label": "CSV-Quelle 2023",
+      "category": "datasource",
       "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2023",
       "format": {
         "typ": "url"
@@ -213,6 +226,7 @@
     },
     "sprache": {
       "label": "Sprache der App",
+      "category": "general",
       "hilfe": "Angabe der App-Sprache",
       "default": "de",
       "format": {
@@ -225,6 +239,7 @@
     },
     "weiterfuehrendeLinks": {
       "label": "Weiterführende Links",
+      "category": "content",
       "hilfe": "Verwandte Datensätze / Hintergrundquellen (Markdown/HTML). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -234,6 +249,7 @@
     },
     "datenquelleHinweis": {
       "label": "Methodik / Datenquelle-Hinweis",
+      "category": "content",
       "hilfe": "Herkunft, Erhebungsmethode und Limitierungen (HTML/Markdown). Leer = ausgeblendet.",
       "format": {
         "typ": "markdown"
@@ -243,6 +259,7 @@
     },
     "datenStand": {
       "label": "Datenstand",
+      "category": "content",
       "hilfe": "Freitext-Hinweis zum Stand der Daten. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -253,6 +270,7 @@
     },
     "kpiKontext1": {
       "label": "KPI-Erklärung 1: Verstöße gesamt",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -263,6 +281,7 @@
     },
     "kpiKontext2": {
       "label": "KPI-Erklärung 2: Bußgelder gesamt (€)",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -273,6 +292,7 @@
     },
     "kpiKontext3": {
       "label": "KPI-Erklärung 3: Ø Bußgeld (€)",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -283,6 +303,7 @@
     },
     "kpiKontext4": {
       "label": "KPI-Erklärung 4: Messpunkte (Orte)",
+      "category": "metrics",
       "hilfe": "Erklärtext unter dem KPI-Wert. Leer = ausgeblendet.",
       "format": {
         "typ": "string",
@@ -293,6 +314,7 @@
     },
     "brandingCSS": {
       "label": "Zusätzliches Branding-CSS",
+      "category": "advanced",
       "hilfe": "Optionaler CSS-Code für die konkrete App-Instanz.",
       "default": "",
       "format": {
@@ -303,6 +325,7 @@
     },
     "brandingCSSFile": {
       "label": "Branding-CSS-Datei",
+      "category": "advanced",
       "hilfe": "Optionale URL zu einer zusätzlichen CSS-Datei für die konkrete App-Instanz.",
       "default": "",
       "format": {
