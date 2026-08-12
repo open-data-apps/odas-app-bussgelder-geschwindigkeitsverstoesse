@@ -1,5 +1,9 @@
 # Changelog
 
+
+## 1.20.0 - 2026-08-12
+- FIX: `app/index.html` auf den Template-Stand (F-47): Datei byte-gleich aus `oda-generic` übernommen — gültiges HTML, deutsche ARIA-Labels, Footer im Body; Titel und Fußzeile bleiben Platzhalter und werden zur Laufzeit aus der Instanz-Config überschrieben
+
 ## 1.19.0 - 2026-08-11
 - FIX: Veraltete Antworten verwerfen (F-44): instanzlokaler `loadToken` – `loadData(year)` startet jeden Lauf mit neuem Token und prüft nach jeder await-Grenze (Cache-Pfad, CSV-Abruf, Parser, Skript-Loads) vor jeder State-/UI-Zuweisung, ob der Lauf noch aktuell ist; ein langsamer Vorjahres-Lauf kann das gewählte Jahr nicht mehr überschreiben, und der Cache-Eintrag wird nur vom aktuellsten Lauf geschrieben
 
