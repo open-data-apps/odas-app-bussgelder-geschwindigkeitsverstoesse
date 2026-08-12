@@ -183,6 +183,7 @@ function app(configdata, enclosingHtmlDivElement) {
 
   // ── App-State ─────────────────────────────────────────────────────────────────
   let allData = [];
+  const dataCache = {}; // F-55: instanzlokaler Jahres-Cache – keine globale Kollision
   let filteredData = [];
   let currentYear = "2023";
   let currentPage = 0;
@@ -499,12 +500,10 @@ function app(configdata, enclosingHtmlDivElement) {
     ].forEach(hide);
     show("#app-loading");
 
-    // Falls Daten bereits im Cache liegen, sofort laden
-    window._odas_cachedBussgelderDataMap =
-      window._odas_cachedBussgelderDataMap || {};
-    if (window._odas_cachedBussgelderDataMap[year]) {
+    // Falls Daten bereits im instanzlokalen Cache liegen, sofort laden
+    if (dataCache[year]) {
       if (token !== loadToken) return;
-      allData = window._odas_cachedBussgelderDataMap[year];
+      allData = dataCache[year];
       el.querySelector("#loading-text").textContent =
         `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
       setBar(100);
@@ -581,9 +580,9 @@ function app(configdata, enclosingHtmlDivElement) {
           !isNaN(parseInt(r.GELDBUSSE, 10)),
       );
 
-      // Im globalen Cache speichern – nur vom aktuellsten Lauf.
+      // Im instanzlokalen Cache speichern – nur vom aktuellsten Lauf.
       if (token !== loadToken) return;
-      window._odas_cachedBussgelderDataMap[year] = allData;
+      dataCache[year] = allData;
 
       // Datenfrische-Label: kein Vorab-Request mehr (F-36) — Fallback auf die
       // datenStand-Konfiguration.
