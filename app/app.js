@@ -109,7 +109,12 @@ const bgLifecycleCleanups = new Map();
 
 function onPageLeave() {
   bgLifecycleCleanups.forEach((cleanup) => {
-    if (typeof cleanup === "function") cleanup();
+    if (typeof cleanup !== "function") return;
+    try {
+      cleanup();
+    } catch (error) {
+      console.warn("Fehler beim Abraeumen der Bussgeld-Instanz:", error);
+    }
   });
   bgLifecycleCleanups.clear();
 }
