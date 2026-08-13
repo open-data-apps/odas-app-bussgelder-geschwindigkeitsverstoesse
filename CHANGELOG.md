@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 1.22.0 - 2026-08-13
+- FIX: Lifecycle-Ressourcen aufgeräumt (F-57): app() registriert je Container ein Teardown in einer instanzübergreifenden Map-Registry; `onPageLeave` ruft diese aus und leert sie — beide Chart-Instanzen (`chartMonat`, `chartTbnr`) werden per `.destroy()` abgeräumt, `loadToken` invalidiert alle noch laufenden Datenladevorgänge, `debounce` und der Ladeindikator-Hide-Timeout werden gecleart; beim Seitenwechsel entstehen keine Charts mehr und der Folge-Seiten-DOM bleibt unberührt
+
 ## 1.21.0 - 2026-08-12
 - FIX: Instanzlokaler Jahres-Cache (F-55): der Bussgeld-Datenbestand wird statt im globalen `window._odas_cachedBussgelderDataMap` in einer instanzlokalen `dataCache`-Konstante verwaltet — getrennte App-Instanzen teilen keine Daten mehr über den window-weiten Cache
 

@@ -101,6 +101,19 @@ async function fetchOdasJson(targetUrl, configdata = {}) {
 
 let bgInstanzZaehler = 0;
 
+// F-57: instanzuebergreifende Lifecycle-Registry, keyed by Container. Jede
+// app()-Instanz registriert ihr Teardown hier; onPageLeave (von app/app-base.js
+// vor dem Seitenwechsel aufgerufen) fuehrt alle soweit moeglich aus und leert
+// die Registry.
+const bgLifecycleCleanups = new Map();
+
+function onPageLeave() {
+  bgLifecycleCleanups.forEach((cleanup) => {
+    if (typeof cleanup === "function") cleanup();
+  });
+  bgLifecycleCleanups.clear();
+}
+
 function escapeHtml(value = "") {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -192,6 +205,31 @@ function app(configdata, enclosingHtmlDivElement) {
   let chartMonat = null;
   let chartTbnr = null;
   const PAGE_SIZE = 50;
+  let disposed = false; // F-57: nach onPageLeave keine UI-Mutation mehr
+  let loadingHideTimer = null; // F-57: Handle fuer den Ladeindikator-Hide-Timeout
+
+  // ── Lifecycle-Registrierung (F-57) ─────────────────────────────────────────
+  // Synchron nach allen lokalen State-Deklarationen, vor DOM-/Async-Arbeit.
+  bgLifecycleCleanups.set(enclosingHtmlDivElement, () => {
+    disposed = true;
+    loadToken++; // F-57: alle in-flight Loads (F-44-Token) invalidieren
+    if (chartMonat) {
+      chartMonat.destroy();
+      chartMonat = null;
+    }
+    if (chartTbnr) {
+      chartTbnr.destroy();
+      chartTbnr = null;
+    }
+    if (debounce) {
+      clearTimeout(debounce);
+      debounce = null;
+    }
+    if (loadingHideTimer) {
+      clearTimeout(loadingHideTimer);
+      loadingHideTimer = null;
+    }
+  });
 
   // ── Basis-HTML rendern ────────────────────────────────────────────────────────
   const el = enclosingHtmlDivElement;
@@ -524,7 +562,10 @@ function app(configdata, enclosingHtmlDivElement) {
         renderWeitereInfos(configdata);
         renderMethodikbox(configdata);
 
-        setTimeout(() => hide("#app-loading"), 200);
+        loadingHideTimer = setTimeout(() => {
+          if (disposed) return;
+          hide("#app-loading");
+        }, 200);
         ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
       } catch (err) {
         if (token !== loadToken) return;
@@ -614,7 +655,10 @@ function app(configdata, enclosingHtmlDivElement) {
       renderWeitereInfos(configdata);
       renderMethodikbox(configdata);
 
-      setTimeout(() => hide("#app-loading"), 400);
+      loadingHideTimer = setTimeout(() => {
+        if (disposed) return;
+        hide("#app-loading");
+      }, 400);
       ["#app-kpis", "#app-filter", "#app-charts", "#app-table"].forEach(show);
     } catch (err) {
       if (token !== loadToken) return;
