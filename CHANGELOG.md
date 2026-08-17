@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 1.23.0 - 2026-08-17
+- **CHG:** `instanz-config`-`category`-Vokabular auf Deutsch umgestellt (`allgemein`, `beschreibung`, `datenherkunft`, `kontakt-rechtliches`, `sonstiges`); die entfallenen Kategorien `metrics` und `advanced` wurden auf `beschreibung` bzw. `sonstiges` verteilt
+
 ## 1.22.0 - 2026-08-13
 - FIX: Lifecycle-Ressourcen aufgeräumt (F-57): app() registriert je Container ein Teardown in einer instanzübergreifenden Map-Registry; `onPageLeave` ruft diese aus und leert sie — beide Chart-Instanzen (`chartMonat`, `chartTbnr`) werden per `.destroy()` abgeräumt, `loadToken` invalidiert alle noch laufenden Datenladevorgänge, `debounce` und der Ladeindikator-Hide-Timeout werden gecleart; beim Seitenwechsel entstehen keine Charts mehr und der Folge-Seiten-DOM bleibt unberührt
 
