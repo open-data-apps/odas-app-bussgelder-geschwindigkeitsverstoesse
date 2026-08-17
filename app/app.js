@@ -272,8 +272,8 @@ function app(configdata, enclosingHtmlDivElement) {
           </div>
         </div>
         <div class="d-flex align-items-center gap-2">
-          <label for="app-jahr" class="form-label mb-0 fw-semibold text-nowrap">Datenjahr:</label>
-          <select id="app-jahr" class="form-select form-select-sm" style="min-width:90px">
+          <label for="app-jahr-${bgUid}" class="form-label mb-0 fw-semibold text-nowrap">Datenjahr:</label>
+          <select id="app-jahr-${bgUid}" class="form-select form-select-sm" style="min-width:90px">
             ${Object.keys(CSV_SOURCES)
               .map(
                 (y) =>
@@ -1017,7 +1017,7 @@ function app(configdata, enclosingHtmlDivElement) {
 
   // ── Event-Listener ────────────────────────────────────────────────────────────
 
-  el.querySelector("#app-jahr").addEventListener("change", (e) => {
+  el.querySelector(`#app-jahr-${bgUid}`).addEventListener("change", (e) => {
     currentYear = e.target.value;
     if (chartMonat) {
       chartMonat.destroy();
