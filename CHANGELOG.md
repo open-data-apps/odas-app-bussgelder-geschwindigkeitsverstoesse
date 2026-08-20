@@ -1,6 +1,11 @@
 # Changelog
 
 
+## 1.25.0 - 2026-08-20
+- FIX: Verworfene Datensätze werden jetzt gezählt und als Hinweis angezeigt (F-73)
+- FIX: Aktiver Fallback auf Bonn-Demodaten bei fehlendem `csvQuelleXXXX` wird jetzt sichtbar angezeigt statt kommentarlos verwendet (F-89)
+- FIX: Encoding-Korrektur von einer festen Bonn-Ortsnamen-Liste auf generisches `TextDecoder("windows-1252")` umgestellt — funktioniert jetzt auch bei anderen Kommunen mit Windows-1252-kodierten Quellen (F-89)
+
 ## 1.24.0 - 2026-08-17
 - `fetchOdasJson()` wirft jetzt bei nicht-JSON-Antworten (CSV, HTML, leerer Body) eine sprechende Konfigurationsfehlermeldung statt der rohen `JSON.parse`-Parserfehlermeldung (F-66)
 - `urlDaten` zeigte auf einen nicht mehr existierenden Host (`offenedaten.esslingen.de`/`open-data-esslingen.de`, NXDOMAIN) bzw. auf den Platzhalter `.../testdaten` (HTTP 404) — jetzt auf die reale Datensatz-Landingpage der tatsächlich konfigurierten `apiurl`-Quelle verweisend, live per HTTP-Abruf verifiziert (F-67)

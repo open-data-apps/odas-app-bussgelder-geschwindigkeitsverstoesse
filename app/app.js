@@ -77,7 +77,12 @@ async function fetchViaOdasProxy(targetUrl) {
   return proxyData.content;
 }
 
-async function fetchOdasResource(targetUrl, configdata = {}) {
+// F-89: `options.encoding` erlaubt es Aufrufern, die Rohbytes der Antwort mit
+// einem expliziten Zeichensatz (z. B. "windows-1252") zu dekodieren, statt
+// sich auf das UTF-8-Default von response.text() zu verlassen. Ohne Angabe
+// bleibt das Verhalten unverändert (UTF-8 via response.text()) – betrifft
+// also nur den direkten (Nicht-Proxy-)Abruf.
+async function fetchOdasResource(targetUrl, configdata = {}, options = {}) {
   if (isOdasProxyEnabled(configdata)) {
     return fetchViaOdasProxy(targetUrl);
   }
@@ -86,6 +91,10 @@ async function fetchOdasResource(targetUrl, configdata = {}) {
     const response = await fetch(targetUrl);
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
+    }
+    if (options.encoding) {
+      const bytes = await response.arrayBuffer();
+      return new TextDecoder(options.encoding).decode(bytes);
     }
     return response.text();
   } catch (error) {
@@ -157,11 +166,30 @@ function app(configdata, enclosingHtmlDivElement) {
   const TITLE =
     (configdata && configdata.titel) || "Bußgelder & Geschwindigkeitsverstöße";
 
-  const CSV_SOURCES = {
-    2023: (configdata && configdata.csvQuelle2023) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
-    2022: (configdata && configdata.csvQuelle2022) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
-    2021: (configdata && configdata.csvQuelle2021) || "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+  // F-89: Feldname je Jahr + hartkodierte Bonn-Demo-URL als Fallback, falls
+  // das jeweilige Pflichtfeld in der Instanz-Config fehlt. csvFallbackFields
+  // sammelt, welche Jahre tatsächlich auf die Demo-URL zurückfallen, damit
+  // ein sichtbarer Hinweis (statt eines stillen Fallbacks) gerendert werden
+  // kann.
+  const CSV_FIELD_NAMES = {
+    2023: "csvQuelle2023",
+    2022: "csvQuelle2022",
+    2021: "csvQuelle2021",
   };
+  const CSV_FALLBACK_URLS = {
+    2023: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+    2022: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+    2021: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+  };
+  const csvFallbackFields = Object.keys(CSV_FALLBACK_URLS).filter(
+    (year) => !(configdata && configdata[CSV_FIELD_NAMES[year]]),
+  );
+  const CSV_SOURCES = {};
+  Object.keys(CSV_FALLBACK_URLS).forEach((year) => {
+    CSV_SOURCES[year] =
+      (configdata && configdata[CSV_FIELD_NAMES[year]]) ||
+      CSV_FALLBACK_URLS[year];
+  });
 
   // Bundeseinheitlicher Tatbestandskatalog – wichtigste Codes
   const TBNR_LABELS = {
@@ -220,6 +248,7 @@ function app(configdata, enclosingHtmlDivElement) {
   // ── App-State ─────────────────────────────────────────────────────────────────
   let allData = [];
   const dataCache = {}; // F-55: instanzlokaler Jahres-Cache – keine globale Kollision
+  const discardedCache = {}; // F-73: instanzlokaler Cache der Verwerfungszahl je Jahr
   let filteredData = [];
   let currentYear = "2023";
   let currentPage = 0;
@@ -302,6 +331,9 @@ function app(configdata, enclosingHtmlDivElement) {
         </div>
       </div>
 
+      <!-- ── Konfigurations-Fallback-Hinweis (F-89) ── -->
+      <div id="bg-fallback-hinweis" class="alert alert-info py-2 px-3 mb-3 small d-none" role="alert"></div>
+
       <!-- ── Datenfrische ── -->
       <div id="bg-datenstand-row" class="text-end mb-2 d-none">
         <small id="bg-datenstand" class="text-muted"></small>
@@ -320,6 +352,9 @@ function app(configdata, enclosingHtmlDivElement) {
 
       <!-- ── Fehlermeldung ── -->
       <div id="app-error" class="alert alert-danger d-none" role="alert"></div>
+
+      <!-- ── Verworfene Datensätze (F-73) ── -->
+      <div id="bg-verworfen-hinweis" class="alert alert-info py-2 px-3 mb-3 small d-none" role="alert"></div>
 
       <!-- ── KPI-Kacheln ── -->
       <div id="app-kpis" class="row g-3 mb-4 d-none">
@@ -437,6 +472,31 @@ function app(configdata, enclosingHtmlDivElement) {
     </div>
   `;
 
+  // F-89: Sichtbarer Hinweis, wenn eine oder mehrere csvQuelleXXXX-Pflichtfelder
+  // fehlen und deshalb auf die hartkodierte Bonn-Demo-URL zurückgefallen wird.
+  // Info-Stil (nicht Fehler-Stil), da es sich um einen Konfigurationszustand
+  // und keinen App-Fehler handelt.
+  if (csvFallbackFields.length) {
+    const hintEl = el.querySelector("#bg-fallback-hinweis");
+    if (hintEl) {
+      const fieldListHtml = csvFallbackFields
+        .map((year) => "<code>" + CSV_FIELD_NAMES[year] + "</code>")
+        .join(", ");
+      const verb = csvFallbackFields.length > 1 ? "sind" : "ist";
+      const jahre = csvFallbackFields.join(", ");
+      hintEl.innerHTML =
+        "Hinweis: Für " +
+        (csvFallbackFields.length > 1 ? "die Jahre " : "das Jahr ") +
+        escapeHtml(jahre) +
+        " werden Bonn-Demodaten angezeigt, da " +
+        fieldListHtml +
+        " nicht konfiguriert " +
+        verb +
+        ".";
+      hintEl.classList.remove("d-none");
+    }
+  }
+
   // ── Hilfsfunktionen ───────────────────────────────────────────────────────────
 
   function fmt(n) {
@@ -465,7 +525,20 @@ function app(configdata, enclosingHtmlDivElement) {
   function normalizeCsvText(value) {
     if (typeof value !== "string") return value;
 
-    // Typische Mojibake-Sequenzen (UTF-8 fälschlich als Latin-1/CP1252 gelesen)
+    // F-89: Die eigentliche Encoding-Korrektur passiert jetzt beim Abruf
+    // (fetchCsvText -> fetchOdasResource mit { encoding: "windows-1252" }),
+    // per TextDecoder direkt auf den Rohbytes der Antwort - das funktioniert
+    // generisch fuer jede Windows-1252-kodierte Quelle, nicht nur fuer Bonn.
+    // Die vormals hier gepflegte feste Liste bekannt kaputter Bonner
+    // Ortsnamen (z. B. "K�ln"->"Köln") ist dadurch hinfaellig und wurde
+    // entfernt, da U+FFFD-Ersatzzeichen beim Abruf ohnehin nicht mehr
+    // entstehen.
+    //
+    // Verbleibend: typische Mojibake-Sequenzen, bei denen urspruenglich
+    // UTF-8-kodierter Text faelschlich als Latin-1/CP1252 gelesen wurde
+    // (z. B. ueber den ODAS-Proxy, dessen serverseitige Dekodierung dieser
+    // Client-Fix nicht beeinflussen kann). Das ist eine allgemeine
+    // Zeichen-Korrektur, keine Bonn-spezifische Ortsnamen-Liste.
     const mojibakeMap = {
       "Ã„": "Ä",
       "Ã–": "Ö",
@@ -488,22 +561,6 @@ function app(configdata, enclosingHtmlDivElement) {
       fixed = fixed.split(broken).join(correct);
     });
 
-    // Fallbacks für bereits zu U+FFFD degradierte Zeichen in häufigen Ortsnamen.
-    const degradedMap = {
-      "Josefsh�he": "Josefshöhe",
-      "K�ln": "Köln",
-      "k�ln": "köln",
-      "K�nigswinter": "Königswinter",
-      "k�nigswinter": "königswinter",
-      " H�he ": " Höhe ",
-      "Stra�e": "Straße",
-      "stra�e": "straße",
-    };
-
-    Object.entries(degradedMap).forEach(([broken, correct]) => {
-      fixed = fixed.split(broken).join(correct);
-    });
-
     return fixed;
   }
 
@@ -515,6 +572,23 @@ function app(configdata, enclosingHtmlDivElement) {
   }
   function setBar(p) {
     el.querySelector("#loading-bar").style.width = p + "%";
+  }
+
+  // F-73: Zeigt an, wie viele CSV-Zeilen beim Parsen verworfen wurden (fehlendes
+  // Datum, Tatort, Tatbestand oder ein nicht-numerisches Bußgeld) – statt sie
+  // stillschweigend aus der Auswertung zu entfernen.
+  function renderVerworfenHinweis(count) {
+    const hintEl = el.querySelector("#bg-verworfen-hinweis");
+    if (!hintEl) return;
+    if (count > 0) {
+      hintEl.textContent =
+        fmt(count) +
+        " Datensatz/Datensätze ohne gültiges Datum, Tatort, Tatbestand oder Bußgeld wurden beim Laden übersprungen.";
+      hintEl.classList.remove("d-none");
+    } else {
+      hintEl.classList.add("d-none");
+      hintEl.textContent = "";
+    }
   }
 
   function loadScript(src) {
@@ -536,7 +610,14 @@ function app(configdata, enclosingHtmlDivElement) {
     // CSV laden: direkt oder ueber den ODAS-Proxy (proxyAktiv).
     // Kein Vorab-Request an die CSV-Domain mehr (F-36); lastModified bleibt null,
     // die Datenfrische stammt aus der datenStand-Konfiguration.
-    const content = await fetchOdasResource(url, configdata);
+    // F-89: Die Bonner Quellen sind laut README Windows-1252-kodiert (siehe
+    // Datei-Kopfkommentar). Beim direkten Abruf (ohne Proxy) werden die
+    // Rohbytes deshalb explizit als Windows-1252 dekodiert statt über das
+    // UTF-8-Default von response.text() – das funktioniert generisch für
+    // jede Windows-1252-kodierte CSV-Quelle, nicht nur für Bonner Ortsnamen.
+    const content = await fetchOdasResource(url, configdata, {
+      encoding: "windows-1252",
+    });
 
     return { content: content, lastModified: null };
   }
@@ -545,7 +626,16 @@ function app(configdata, enclosingHtmlDivElement) {
 
   async function loadData(year) {
     const url = CSV_SOURCES[year];
-    if (!url) return;
+    if (!url) {
+      hide("#app-loading");
+      show("#app-error");
+      const errEl = el.querySelector("#app-error");
+      if (errEl) {
+        errEl.className = "alert alert-info";
+        errEl.innerHTML = "Es ist keine Datenquelle für dieses Jahr konfiguriert.";
+      }
+      return;
+    }
 
     // F-44: monotoner Request-Token – überholt ein neuerer loadData-Lauf
     // diesen, bricht der Lauf an der nächsten await-Grenze ab.
@@ -558,6 +648,7 @@ function app(configdata, enclosingHtmlDivElement) {
       "#app-charts",
       "#app-table",
       "#app-error",
+      "#bg-verworfen-hinweis",
     ].forEach(hide);
     show("#app-loading");
 
@@ -565,6 +656,20 @@ function app(configdata, enclosingHtmlDivElement) {
     if (dataCache[year]) {
       if (token !== loadToken) return;
       allData = dataCache[year];
+      if (allData.length === 0) {
+        hide("#app-loading");
+        show("#app-error");
+        renderVerworfenHinweis(discardedCache[year] || 0);
+        const errEl = el.querySelector("#app-error");
+        if (errEl) {
+          errEl.className = "alert alert-info";
+          errEl.innerHTML = "Keine Datensätze für das ausgewählte Jahr in der Datenquelle gefunden.";
+        }
+        renderWeitereInfos(configdata);
+        renderMethodikbox(configdata);
+        return;
+      }
+
       el.querySelector("#loading-text").textContent =
         `✓ ${fmt(allData.length)} Datensätze aus Cache geladen.`;
       setBar(100);
@@ -582,6 +687,7 @@ function app(configdata, enclosingHtmlDivElement) {
         // UI aufbauen
         buildFilterOptions();
         applyFilter();
+        renderVerworfenHinweis(discardedCache[year] || 0);
         renderWeitereInfos(configdata);
         renderMethodikbox(configdata);
 
@@ -594,8 +700,11 @@ function app(configdata, enclosingHtmlDivElement) {
         if (token !== loadToken) return;
         hide("#app-loading");
         show("#app-error");
-        el.querySelector("#app-error").innerHTML =
-          "<strong>Fehler beim Laden der Skripte:</strong> " + err.message;
+        const errEl = el.querySelector("#app-error");
+        if (errEl) {
+          errEl.className = "alert alert-danger";
+          errEl.innerHTML = "<strong>Fehler beim Laden der Skripte:</strong> " + escapeHtml(err.message);
+        }
       }
       return;
     }
@@ -635,6 +744,7 @@ function app(configdata, enclosingHtmlDivElement) {
       if (token !== loadToken) return;
 
       // Nur vollständige, valide Zeilen
+      const parsedTotal = result.data.length;
       allData = result.data.filter(
         (r) =>
           r.TATTAG &&
@@ -643,10 +753,29 @@ function app(configdata, enclosingHtmlDivElement) {
           r.GELDBUSSE &&
           !isNaN(parseInt(r.GELDBUSSE, 10)),
       );
+      // F-73: Zeilen ohne gültiges Datum/Tatort/Tatbestand/Bußgeld wurden oben
+      // stillschweigend verworfen – die Differenz wird gezählt und (sofern >0)
+      // als sichtbarer Hinweis angezeigt statt kommentarlos zu verschwinden.
+      const discardedCount = parsedTotal - allData.length;
 
       // Im instanzlokalen Cache speichern – nur vom aktuellsten Lauf.
       if (token !== loadToken) return;
       dataCache[year] = allData;
+      discardedCache[year] = discardedCount;
+
+      if (allData.length === 0) {
+        hide("#app-loading");
+        show("#app-error");
+        renderVerworfenHinweis(discardedCount);
+        const errEl = el.querySelector("#app-error");
+        if (errEl) {
+          errEl.className = "alert alert-info";
+          errEl.innerHTML = "Keine Datensätze für das ausgewählte Jahr in der Datenquelle gefunden.";
+        }
+        renderWeitereInfos(configdata);
+        renderMethodikbox(configdata);
+        return;
+      }
 
       // Datenfrische-Label: kein Vorab-Request mehr (F-36) — Fallback auf die
       // datenStand-Konfiguration.
@@ -675,6 +804,7 @@ function app(configdata, enclosingHtmlDivElement) {
       // UI aufbauen
       buildFilterOptions();
       applyFilter();
+      renderVerworfenHinweis(discardedCount);
       renderWeitereInfos(configdata);
       renderMethodikbox(configdata);
 
@@ -687,15 +817,19 @@ function app(configdata, enclosingHtmlDivElement) {
       if (token !== loadToken) return;
       hide("#app-loading");
       show("#app-error");
-      const u = safeHttpUrl(url);
-      const testlink = u
-        ? ` Direkter Testlink: <a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`
-        : "";
-      el.querySelector("#app-error").innerHTML =
-        `<strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}` +
-        '<br><small class="text-muted">Bitte prüfen Sie, ob der Server CORS-Anfragen erlaubt.' +
-        testlink +
-        "</small>";
+      const errEl = el.querySelector("#app-error");
+      if (errEl) {
+        errEl.className = "alert alert-danger";
+        const u = safeHttpUrl(url);
+        const testlink = u
+          ? ` Direkter Testlink: <a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`
+          : "";
+        errEl.innerHTML =
+          `<strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}` +
+          '<br><small class="text-muted">Bitte prüfen Sie, ob der Server CORS-Anfragen erlaubt.' +
+          testlink +
+          "</small>";
+      }
     }
   }
 
