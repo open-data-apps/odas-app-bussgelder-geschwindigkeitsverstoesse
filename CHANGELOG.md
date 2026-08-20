@@ -1,5 +1,7 @@
 # Changelog
 
+## 1.26.0 - 2026-08-20
+- Markdown-Metadaten: Paketbeschreibungen auf echtes Markdown umgestellt, exakte Identität Top-Level/Instanz hergestellt, lokale HTML-Fixture semantisch gespiegelt.
 
 ## 1.25.0 - 2026-08-20
 - FIX: Verworfene Datensätze werden jetzt gezählt und als Hinweis angezeigt (F-73)
