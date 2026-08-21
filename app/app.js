@@ -11,9 +11,11 @@
  *
  * config.json:
  * {
- *   "csvQuelle2023": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
- *   "csvQuelle2022": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
- *   "csvQuelle2021": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+ *   "apiurls": [
+ *     { "name": "verstoesse-2023", "label": "CSV-Quelle 2023", "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv" },
+ *     { "name": "verstoesse-2022", "label": "CSV-Quelle 2022", "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv" },
+ *     { "name": "verstoesse-2021", "label": "CSV-Quelle 2021", "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv" }
+ *   ],
  *   "titel":  "Bußgelder & Geschwindigkeitsverstöße"
  * }
  *
@@ -104,6 +106,17 @@ async function fetchOdasResource(targetUrl, configdata = {}, options = {}) {
   }
 }
 
+/**
+ * Löst eine benannte Datenressource aus configdata.apiurls auf.
+ * Neue apiurls-Form (typ: "array"); das frühere skalare apiurl wird nicht mehr gelesen.
+ * @returns {string} getrimmte URL, oder "" für den Zustand "keine Quelle konfiguriert"
+ */
+function getOdasApiUrl(configdata, name) {
+  const liste = Array.isArray(configdata && configdata.apiurls) ? configdata.apiurls : [];
+  const treffer = liste.find((eintrag) => eintrag && eintrag.name === name);
+  return String((treffer && treffer.url) || "").trim();
+}
+
 async function fetchOdasJson(targetUrl, configdata = {}) {
   const rawContent = await fetchOdasResource(targetUrl, configdata);
   try {
@@ -172,9 +185,9 @@ function app(configdata, enclosingHtmlDivElement) {
   // ein sichtbarer Hinweis (statt eines stillen Fallbacks) gerendert werden
   // kann.
   const CSV_FIELD_NAMES = {
-    2023: "csvQuelle2023",
-    2022: "csvQuelle2022",
-    2021: "csvQuelle2021",
+    2023: "verstoesse-2023",
+    2022: "verstoesse-2022",
+    2021: "verstoesse-2021",
   };
   const CSV_FALLBACK_URLS = {
     2023: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
@@ -182,12 +195,12 @@ function app(configdata, enclosingHtmlDivElement) {
     2021: "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
   };
   const csvFallbackFields = Object.keys(CSV_FALLBACK_URLS).filter(
-    (year) => !(configdata && configdata[CSV_FIELD_NAMES[year]]),
+    (year) => !getOdasApiUrl(configdata, CSV_FIELD_NAMES[year]),
   );
   const CSV_SOURCES = {};
   Object.keys(CSV_FALLBACK_URLS).forEach((year) => {
     CSV_SOURCES[year] =
-      (configdata && configdata[CSV_FIELD_NAMES[year]]) ||
+      getOdasApiUrl(configdata, CSV_FIELD_NAMES[year]) ||
       CSV_FALLBACK_URLS[year];
   });
 
@@ -472,7 +485,7 @@ function app(configdata, enclosingHtmlDivElement) {
     </div>
   `;
 
-  // F-89: Sichtbarer Hinweis, wenn eine oder mehrere csvQuelleXXXX-Pflichtfelder
+  // F-89: Sichtbarer Hinweis, wenn eine oder mehrere apiurls.verstoesse-XXXX-Pflichteintraege
   // fehlen und deshalb auf die hartkodierte Bonn-Demo-URL zurückgefallen wird.
   // Info-Stil (nicht Fehler-Stil), da es sich um einen Konfigurationszustand
   // und keinen App-Fehler handelt.

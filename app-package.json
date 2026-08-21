@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "version": "1.26.0",
+  "version": "1.27.0",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
   "kurzbeschreibung": "Interaktive Analyse von Bußgeldern und Geschwindigkeitsverstößen der Stadt Bonn mit Filterung, Auswertung und Visualisierung.",
@@ -244,35 +244,38 @@
       },
       "erforderlich": "ja"
     },
-    "csvQuelle2021": {
-      "label": "CSV-Quelle 2021",
+    "apiurls": {
+      "label": "URLs zu Datenressourcen",
       "category": "datenherkunft",
-      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2021",
+      "hilfe": "Direkter Download-, Datei- oder API-Endpunkt der tatsächlich verwendeten Datenquelle(n). Mehrere Einträge möglich.",
+      "typ": "array",
       "format": {
-        "typ": "url"
+        "typ": "url",
+        "laenge": 500
       },
-      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
-      "erforderlich": "ja"
-    },
-    "csvQuelle2022": {
-      "label": "CSV-Quelle 2022",
-      "category": "datenherkunft",
-      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2022",
-      "format": {
-        "typ": "url"
-      },
-      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
-      "erforderlich": "ja"
-    },
-    "csvQuelle2023": {
-      "label": "CSV-Quelle 2023",
-      "category": "datenherkunft",
-      "hilfe": "URL zur CSV-Datei der Geschwindigkeitsverstöße für das Jahr 2023",
-      "format": {
-        "typ": "url"
-      },
-      "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
-      "erforderlich": "ja"
+      "urls": [
+        {
+          "name": "verstoesse-2021",
+          "label": "CSV-Quelle 2021",
+          "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+          "beispiel": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
+          "erforderlich": "ja"
+        },
+        {
+          "name": "verstoesse-2022",
+          "label": "CSV-Quelle 2022",
+          "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+          "beispiel": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
+          "erforderlich": "ja"
+        },
+        {
+          "name": "verstoesse-2023",
+          "label": "CSV-Quelle 2023",
+          "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+          "beispiel": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+          "erforderlich": "ja"
+        }
+      ]
     },
     "sprache": {
       "label": "Sprache der App",

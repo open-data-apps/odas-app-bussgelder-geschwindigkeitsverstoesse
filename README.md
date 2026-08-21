@@ -73,9 +73,7 @@ App läuft auf http://localhost:8089 (Konfiguration wird lokal geladen).
 
 | Parameter      | Beschreibung                                        | Pflicht |
 | -------------- | --------------------------------------------------- | ------- |
-| `csvQuelle2021` | CSV-URL der Geschwindigkeitsverstöße für 2021          | ja      |
-| `csvQuelle2022` | CSV-URL der Geschwindigkeitsverstöße für 2022          | ja      |
-| `csvQuelle2023` | CSV-URL der Geschwindigkeitsverstöße für 2023          | ja      |
+| `apiurls`      | URLs zu Datenressourcen (Array, drei Einträge, alle Pflicht): `verstoesse-2021` — CSV-URL der Geschwindigkeitsverstöße für 2021; `verstoesse-2022` — 2022; `verstoesse-2023` — 2023 | ja      |
 | `urlDaten`     | URL zur Datensatz-Seite im ODP                      | ja      |
 | `titel`        | Anzeigetitel der App                                | ja      |
 | `seitentitel`  | Browser-Tab-Titel                                   | ja      |
@@ -153,7 +151,7 @@ dem EntryPoint `websecure` und dem Zertifikatsresolver `letsencrypt`.
    wird `ja`. Der ODAS-Proxy `…/odp-data` steht im Standalone-Container nicht zur
    Verfuegung; die mitgelieferte `nginx.conf` kennt keinen entsprechenden
    `location`-Block.
-3. Die Datenquelle (`csvQuelle2021`, `csvQuelle2022`, `csvQuelle2023`) auf eine CORS-freigegebene Ressource umstellen. Die
+3. Die Datenquelle (`apiurls.verstoesse-2021`, `apiurls.verstoesse-2022`, `apiurls.verstoesse-2023`) auf eine CORS-freigegebene Ressource umstellen. Die
    mitgelieferte Quelle (`opendata.bonn.de`) sendet keinen
    `Access-Control-Allow-Origin`-Header und ist standalone **nicht** nutzbar.
 4. Starten:

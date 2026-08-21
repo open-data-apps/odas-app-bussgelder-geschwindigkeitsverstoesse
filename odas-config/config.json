@@ -49,9 +49,23 @@
     "App-Entwickler: Ondics GmbH | ",
     "Provided by: Ondics GmbH"
   ],
-  "csvQuelle2021": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
-  "csvQuelle2022": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv",
-  "csvQuelle2023": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv",
+  "apiurls": [
+    {
+      "name": "verstoesse-2021",
+      "label": "CSV-Quelle 2021",
+      "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv"
+    },
+    {
+      "name": "verstoesse-2022",
+      "label": "CSV-Quelle 2022",
+      "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv"
+    },
+    {
+      "name": "verstoesse-2023",
+      "label": "CSV-Quelle 2023",
+      "url": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv"
+    }
+  ],
   "sprache": "de",
   "weiterfuehrendeLinks": "<ul><li><a href=\"https://opendata.bonn.de/\" target=\"_blank\" rel=\"noopener\">Open Data Bonn</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2023.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2023 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2022.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2022 (CSV)</a></li><li><a href=\"https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv\" target=\"_blank\" rel=\"noopener\">Geschwindigkeitsverstöße 2021 (CSV)</a></li><li><a href=\"https://www.bonn.de/\" target=\"_blank\" rel=\"noopener\">Stadt Bonn</a></li></ul>",
   "datenquelleHinweis": "<p>Die Daten stammen aus monatlichen CSV-Dateien der Stadt Bonn und werden in der App zusammengeführt. Tatbestände und Summen werden aus den veröffentlichten Tabellenwerten abgeleitet; die App bewertet keine Einzelfälle und ersetzt keine amtliche Statistikveröffentlichung.</p>",

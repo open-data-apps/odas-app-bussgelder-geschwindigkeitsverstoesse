@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.27.0 - 2026-08-21
+- **CHG:** Die drei skalaren Felder `csvQuelle2021`, `csvQuelle2022`, `csvQuelle2023` durch das Array-Feld `apiurls` ersetzt (`typ: "array"`, Einträge `verstoesse-2021`, `verstoesse-2022`, `verstoesse-2023`). Neuer Standard portfolioweit; `app.js` liest jede Quelle jetzt über `getOdasApiUrl(configdata, "<name>")`.
+
 ## 1.26.0 - 2026-08-20
 - Markdown-Metadaten: Paketbeschreibungen auf echtes Markdown umgestellt, exakte Identität Top-Level/Instanz hergestellt, lokale HTML-Fixture semantisch gespiegelt.
 
