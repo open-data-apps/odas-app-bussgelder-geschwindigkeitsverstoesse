@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "app-version": "1.28.0",
+  "app-version": "1.29.0",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -216,7 +216,7 @@
       "format": {
         "typ": "url"
       },
-      "default": "",
+      "default": "https://opendata.bonn.de/dataset/bu%C3%9Fgelder-flie%C3%9Fender-verkehr-2023",
       "beispiel": "",
       "erforderlich": "ja"
     },

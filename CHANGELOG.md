@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.29.0 - 2026-08-25
+- **FIX:** `urlDaten` verlinkt jetzt die Datensatzseite des neuesten konfigurierten Jahrgangs (`Bußgelder fließender Verkehr 2023`) statt der Portal-Startseite – Standard „Eine Quelle = eine vollständige URL“, R4. Die drei Jahres-CSVs stammen aus drei getrennten Bonner Jahres-Datensätzen.
+
 ## 1.28.0 - 2026-08-22
 - **CHG:** `version` in `app-package.json` zu `app-version` umbenannt.
 - **ENH:** Top-Level-Feld `app-package-version` ergänzt (Wert `"2"`: mehrere benannte API-URLs über `instanz-config.apiurls`).
