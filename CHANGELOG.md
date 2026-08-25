@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.30.0 - 2026-08-25
+- **CHG:** Proxy-Aufruf sendet die vollständige Ziel-URL statt nur Pfad+Query, damit die neue Origin-Allowlist-Prüfung der ODAS-Plattform greift (bisher implizite Auflösung gegen den ersten konfigurierten `apiurl`).
+- **FIX:** Tote Anbieter-Shortcodes in Kontakt/Impressum ersetzt (`{{odp.anbieter.url-extern}}` → `{{odp.anbieter.url}}`, `tel:{{odp.anbieter.telcode}}` → `tel:{{odp.anbieter.tel}}`).
+
+
 ## 1.29.0 - 2026-08-25
 - **FIX:** `urlDaten` verlinkt jetzt die Datensatzseite des neuesten konfigurierten Jahrgangs (`Bußgelder fließender Verkehr 2023`) statt der Portal-Startseite – Standard „Eine Quelle = eine vollständige URL“, R4. Die drei Jahres-CSVs stammen aus drei getrennten Bonner Jahres-Datensätzen.
 
