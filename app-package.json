@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "app-version": "1.30.0",
+  "app-version": "1.30.1",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -259,7 +259,7 @@
           "name": "verstoesse-2021",
           "label": "Jahr 2021 – CSV (Bonn)",
           "default": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
-          "beispiel": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverstoesse2021.csv",
+          "beispiel": "https://opendata.bonn.de/sites/default/files/Geschwindigkeitsverst%C3%B6%C3%9Fe%202021.csv",
           "erforderlich": "ja"
         },
         {
