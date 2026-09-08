@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.30.1 - 2026-09-07
+## 1.30.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (csv-zip) je Jahr vor dem ersten Fetch; Quellen- und Ladefehler über `renderOdasFehler` (1.30.1 -> 1.30.2).
+
+## 1.30.1 - 2026-09-07
 - **FIX:** Frictionless-Härtung: `assets/schema.json` mit Titeln, echten Typen (`date`/`integer`) und Fachbeschreibungen; totes 2021-Beispiel (404) auf funktionierenden Default angeglichen.
 
 ## 1.30.0 - 2026-08-25
