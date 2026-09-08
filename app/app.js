@@ -798,14 +798,22 @@ function app(configdata, enclosingHtmlDivElement) {
 
   async function loadData(year) {
     const url = CSV_SOURCES[year];
+    const bgKontext = {
+      url,
+      label: `Verstoße-CSV ${year}`,
+      typLabel: "Statische Datei",
+      erwarteterTyp: "csv-zip",
+    };
     if (!url) {
       hide("#app-loading");
-      show("#app-error");
-      const errEl = el.querySelector("#app-error");
-      if (errEl) {
-        errEl.className = "alert alert-info";
-        errEl.innerHTML = "Es ist keine Datenquelle für dieses Jahr konfiguriert.";
-      }
+      renderOdasFehler(el, new Error("Keine Datenquelle konfiguriert."), bgKontext);
+      return;
+    }
+    // Variante A (F-92): Typprüfung vor dem ersten Fetch.
+    const bgTypWarn = validateUrlTypErwartung(url, "csv-zip");
+    if (bgTypWarn) {
+      hide("#app-loading");
+      renderOdasFehler(el, new Error(bgTypWarn), bgKontext);
       return;
     }
 
@@ -988,20 +996,7 @@ function app(configdata, enclosingHtmlDivElement) {
     } catch (err) {
       if (token !== loadToken) return;
       hide("#app-loading");
-      show("#app-error");
-      const errEl = el.querySelector("#app-error");
-      if (errEl) {
-        errEl.className = "alert alert-danger";
-        const u = safeHttpUrl(url);
-        const testlink = u
-          ? ` Direkter Testlink: <a href="${escapeHtml(u)}" target="_blank" rel="noopener">${escapeHtml(u)}</a>`
-          : "";
-        errEl.innerHTML =
-          `<strong>Fehler beim Laden der Daten:</strong> ${escapeHtml(err.message)}` +
-          '<br><small class="text-muted">Bitte prüfen Sie, ob der Server CORS-Anfragen erlaubt.' +
-          testlink +
-          "</small>";
-      }
+      renderOdasFehler(el, err, bgKontext);
     }
   }
 
