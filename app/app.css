@@ -24,3 +24,55 @@
 .bg-kpi-info-toggle:hover, .bg-kpi-info-toggle:focus-visible, .bg-kpi-info-toggle:not(.collapsed) { color: #fff; background: rgba(255,255,255,0.15); outline: none; }
 .bg-kpi-info-icon { font-size: 1rem; line-height: 1; }
 .bg-kpi-kontext { margin-top: 0.5rem; color: rgba(255,255,255,0.85); font-size: 0.875rem; line-height: 1.4; }
+
+/* ── App-Layout (BG: aus dem inline-<style> in app.js hierher verschoben) ── */
+.bg-app { background: #f8f9fa; }
+.kpi-card {
+  border-radius: 10px; padding: 18px 20px; color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+}
+.kpi-card .kpi-val  { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
+.kpi-card .kpi-lbl  { font-size: .72rem; opacity: .85; margin-top: 4px;
+                      text-transform: uppercase; letter-spacing: .06em; }
+.kpi-card .kpi-ico  { font-size: 1.6rem; float: right; opacity: .4; }
+.tbl-tatort         { max-width: 260px; overflow: hidden; text-overflow: ellipsis;
+                      white-space: nowrap; }
+.badge-tbnr         { font-size: .68rem; white-space: normal; text-align: left; }
+.progress-wrap      { height: 4px; border-radius: 2px; overflow: hidden;
+                      background: #e9ecef; }
+.progress-fill      { height: 100%; background: #2563eb;
+                      transition: width .4s ease; width: 0; }
+.table-scroll       { max-height: 430px; overflow-y: auto; }
+/* Jahresvergleich (Balkenliste, ohne zusätzliche Chart-Instanz) */
+.vgl-block { margin-bottom: .9rem; }
+.vgl-jahr {
+  font-size: .85rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: .25rem;
+}
+.vgl-metric { display: flex; align-items: center; gap: .5rem; margin-bottom: .2rem; }
+.vgl-legende {
+  flex: 0 0 5.2rem;
+  font-size: .72rem;
+  color: #6b7280;
+}
+.vgl-track {
+  flex: 1 1 auto;
+  background: #f1f5f9;
+  border-radius: 999px;
+  height: 12px;
+  overflow: hidden;
+}
+.vgl-bar { height: 100%; border-radius: 999px; transition: width .3s ease; }
+.vgl-bar.anzahl { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+.vgl-bar.summe { background: linear-gradient(90deg, #f87171, #dc2626); }
+.vgl-val {
+  flex: 0 0 6.5rem;
+  text-align: right;
+  font-size: .76rem;
+  color: #475569;
+  font-variant-numeric: tabular-nums;
+}
+.vgl-val.haupt { font-weight: 700; color: #1e293b; }
+.vgl-nicht-verfuegbar { font-size: .74rem; color: #9ca3af; }

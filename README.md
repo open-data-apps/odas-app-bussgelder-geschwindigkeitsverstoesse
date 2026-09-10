@@ -18,6 +18,8 @@ Single Page Application mit Logo, Menü, Impressum/Datenschutz/Kontakt-Seiten un
 - **Filter**: Tatort-Freitext, Verstoßkategorie, Mindest-Bußgeld
 - **Datentabelle**: Paginierte Detailansicht (50 Datensätze pro Seite)
 - **Jahresumschaltung**: Datensätze 2021, 2022, 2023
+- **Jahresvergleich**: Alle Jahre nebeneinander (Verstöße und Bußgeldsumme) unter den aktuellen Filtern
+- **CSV-Export**: Gefilterte Einzelverstöße als Excel-kompatible CSV
 
 ---
 

@@ -97,11 +97,11 @@ async function fetchViaOdasProxy(targetUrl, options = {}) {
 // also nur den direkten (Nicht-Proxy-)Abruf.
 async function fetchOdasResource(targetUrl, configdata = {}, options = {}) {
   if (isOdasProxyEnabled(configdata)) {
-    return fetchViaOdasProxy(targetUrl);
+    return fetchViaOdasProxy(targetUrl, options);
   }
 
   try {
-    const response = await fetch(targetUrl);
+    const response = await fetch(targetUrl, { signal: options.signal });
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
@@ -111,6 +111,9 @@ async function fetchOdasResource(targetUrl, configdata = {}, options = {}) {
     }
     return response.text();
   } catch (error) {
+    // Abbruch ist kein Fehlerfall – unverpackt weiterreichen, damit Aufrufer
+    // ihn still behandeln können (BG-B4).
+    if (error && error.name === "AbortError") throw error;
     throw new Error(
       `Direkter Datenabruf fehlgeschlagen (${error.message}). Bitte prüfen Sie die Daten-URL und die CORS-Freigabe der Datenquelle.`,
     );
@@ -288,16 +291,6 @@ function renderOdasFehler(container, error, kontext = {}) {
   container.innerHTML = `<div class="alert ${alertClass}" role="alert"><strong>${escapeHtml(titel)}</strong><p class="mb-1">${escapeHtml(info.hinweis)}</p>${urlZeile}<details class="small"><summary>Details</summary><code>${escapeHtml(info.detail || String(error))}</code></details></div>`;
 }
 
-function isLeerErgebnis(json) {
-  if (!json) return true;
-  if (Array.isArray(json) && json.length === 0) return true;
-  if (Array.isArray(json.records) && json.records.length === 0) return true;
-  if (Array.isArray(json.results) && json.results.length === 0) return true;
-  if (json.result && Array.isArray(json.result.records) && json.result.records.length === 0) return true;
-  return false;
-}
-
-
 let bgInstanzZaehler = 0;
 
 // F-57: instanzuebergreifende Lifecycle-Registry, keyed by Container. Jede
@@ -431,12 +424,31 @@ function app(configdata, enclosingHtmlDivElement) {
   const PAGE_SIZE = 50;
   let disposed = false; // F-57: nach onPageLeave keine UI-Mutation mehr
   let loadingHideTimer = null; // F-57: Handle fuer den Ladeindikator-Hide-Timeout
+  let loadController = null; // BG-B4: AbortController des laufenden CSV-Abrufs
+  let compareController = null; // Jahresvergleich: eigener Abruf-Lauf
+  let compareMode = false; // Jahresvergleich aktiv?
 
   // ── Lifecycle-Registrierung (F-57) ─────────────────────────────────────────
   // Synchron nach allen lokalen State-Deklarationen, vor DOM-/Async-Arbeit.
+  // BG-B1: Vorgänger-Instanz desselben Containers zuerst abräumen — sonst
+  // leaken bei Same-Page-Re-Render beide Chart-Instanzen.
+  const bgVorherigerCleanup = bgLifecycleCleanups.get(enclosingHtmlDivElement);
+  if (bgVorherigerCleanup) {
+    try {
+      bgVorherigerCleanup();
+    } catch (_e) {}
+  }
   bgLifecycleCleanups.set(enclosingHtmlDivElement, () => {
     disposed = true;
     loadToken++; // F-57: alle in-flight Loads (F-44-Token) invalidieren
+    if (loadController) {
+      loadController.abort();
+      loadController = null;
+    }
+    if (compareController) {
+      compareController.abort();
+      compareController = null;
+    }
     if (chartMonat) {
       chartMonat.destroy();
       chartMonat = null;
@@ -458,25 +470,6 @@ function app(configdata, enclosingHtmlDivElement) {
   // ── Basis-HTML rendern ────────────────────────────────────────────────────────
   const el = enclosingHtmlDivElement;
   el.innerHTML = `
-    <style>
-      .bg-app { background: #f8f9fa; }
-      .kpi-card {
-        border-radius: 10px; padding: 18px 20px; color: #fff;
-        box-shadow: 0 2px 8px rgba(0,0,0,.12);
-      }
-      .kpi-card .kpi-val  { font-size: 1.9rem; font-weight: 700; line-height: 1.1; }
-      .kpi-card .kpi-lbl  { font-size: .72rem; opacity: .85; margin-top: 4px;
-                            text-transform: uppercase; letter-spacing: .06em; }
-      .kpi-card .kpi-ico  { font-size: 1.6rem; float: right; opacity: .4; }
-      .tbl-tatort         { max-width: 260px; overflow: hidden; text-overflow: ellipsis;
-                            white-space: nowrap; }
-      .badge-tbnr         { font-size: .68rem; white-space: normal; text-align: left; }
-      .progress-wrap      { height: 4px; border-radius: 2px; overflow: hidden;
-                            background: #e9ecef; }
-      .progress-fill      { height: 100%; background: #2563eb;
-                            transition: width .4s ease; width: 0; }
-      .table-scroll       { max-height: 430px; overflow-y: auto; }
-    </style>
 
     <div class="bg-app rounded-3 p-3 p-md-4">
 
@@ -500,6 +493,10 @@ function app(configdata, enclosingHtmlDivElement) {
               )
               .join("")}
           </select>
+          <div class="form-check form-switch mb-0 ms-2">
+            <input class="form-check-input" type="checkbox" role="switch" id="app-vergleich-${bgUid}">
+            <label class="form-check-label small fw-semibold text-nowrap" for="app-vergleich-${bgUid}">Jahresvergleich</label>
+          </div>
         </div>
       </div>
 
@@ -614,11 +611,23 @@ function app(configdata, enclosingHtmlDivElement) {
         </div>
       </div>
 
+      <!-- ── Jahresvergleich (alle Jahre, aktuelle Filter) ── -->
+      <div id="app-vergleich" class="card border-0 shadow-sm mb-4 d-none">
+        <div class="card-body">
+          <h6 class="card-title text-muted mb-1">📊 Jahresvergleich</h6>
+          <p class="text-muted small mb-3">Alle Jahre mit den aktuellen Filtern (Tatort, Kategorie, Bußgeld min.) - unabhängig vom gewählten Datenjahr.</p>
+          <div id="vergleich-body"></div>
+        </div>
+      </div>
+
       <!-- ── Tabelle ── -->
       <div id="app-table" class="card border-0 shadow-sm d-none">
         <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-2">
           <span class="fw-semibold small">Einzelverstöße</span>
-          <span id="table-info" class="text-muted" style="font-size:.8rem"></span>
+          <div class="d-flex align-items-center gap-2">
+            <button id="bg-btn-export" type="button" class="btn btn-sm btn-outline-secondary" title="Gefilterte Einzelverstöße als CSV laden">CSV-Export</button>
+            <span id="table-info" class="text-muted" style="font-size:.8rem"></span>
+          </div>
         </div>
         <div class="table-scroll">
           <table class="table table-sm table-hover mb-0 align-middle">
@@ -764,21 +773,35 @@ function app(configdata, enclosingHtmlDivElement) {
   }
 
   function loadScript(src) {
+    // BG-B3: Ein bereits eingefügter, aber noch nicht fertig geladener
+    // Script-Tag wurde vorher sofort als „geladen“ gewertet. Bei schnellem
+    // Jahreswechsel fehlten Papa/Chart dann noch und der Lauf brach mit einem
+    // ReferenceError ab. Jetzt wird auf denselben Ladevorgang gewartet.
     return new Promise((resolve, reject) => {
-      if (document.querySelector('script[src="' + src + '"]')) {
-        resolve();
+      const fehler = () =>
+        reject(new Error("Script konnte nicht geladen werden: " + src));
+      const vorhanden = document.querySelector('script[src="' + src + '"]');
+      if (vorhanden) {
+        if (vorhanden.bgGeladen) {
+          resolve();
+          return;
+        }
+        vorhanden.addEventListener("load", () => resolve());
+        vorhanden.addEventListener("error", fehler);
         return;
       }
       const s = document.createElement("script");
       s.src = src;
-      s.onload = resolve;
-      s.onerror = () =>
-        reject(new Error("Script konnte nicht geladen werden: " + src));
+      s.onload = () => {
+        s.bgGeladen = true;
+        resolve();
+      };
+      s.onerror = fehler;
       document.head.appendChild(s);
     });
   }
 
-  async function fetchCsvText(url) {
+  async function fetchCsvText(url, signal) {
     // CSV laden: direkt oder ueber den ODAS-Proxy (proxyAktiv).
     // Kein Vorab-Request an die CSV-Domain mehr (F-36); lastModified bleibt null,
     // die Datenfrische stammt aus der datenStand-Konfiguration.
@@ -787,8 +810,11 @@ function app(configdata, enclosingHtmlDivElement) {
     // Rohbytes deshalb explizit als Windows-1252 dekodiert statt über das
     // UTF-8-Default von response.text() – das funktioniert generisch für
     // jede Windows-1252-kodierte CSV-Quelle, nicht nur für Bonner Ortsnamen.
+    // BG-B4: `signal` bricht einen laufenden (mehrere MB großen) Download beim
+    // Jahres-/Seitenwechsel ab, statt ihn bis zum Ende durchlaufen zu lassen.
     const content = await fetchOdasResource(url, configdata, {
       encoding: "windows-1252",
+      signal,
     });
 
     return { content: content, lastModified: null };
@@ -796,9 +822,31 @@ function app(configdata, enclosingHtmlDivElement) {
 
   // ── CSV laden & parsen ────────────────────────────────────────────────────────
 
+  // Gemeinsamer Parse-Schritt für den Jahreslauf und den Jahresvergleich:
+  // Semikolon-CSV, nur vollständige Zeilen; die Differenz wird als
+  // „verworfen“ zurückgegeben (F-73).
+  function parseCsvZuRecords(csvText) {
+    const result = Papa.parse(csvText, {
+      delimiter: ";",
+      header: true,
+      skipEmptyLines: true,
+      transformHeader: (h) => h.trim(),
+      transform: (v) => normalizeCsvText(v).trim(),
+    });
+    const parsedTotal = result.data.length;
+    const records = result.data.filter(
+      (r) =>
+        r.TATTAG &&
+        r.TATORT &&
+        r.TATBESTANDBE_TBNR &&
+        r.GELDBUSSE &&
+        !isNaN(parseInt(r.GELDBUSSE, 10)),
+    );
+    return { records: records, discarded: parsedTotal - records.length };
+  }
+
   async function loadData(year) {
-    const url = CSV_SOURCES[year];
-    const bgKontext = {
+    const url = CSV_SOURCES[year];    const bgKontext = {
       url,
       label: `Verstoße-CSV ${year}`,
       typLabel: "Statische Datei",
@@ -820,6 +868,10 @@ function app(configdata, enclosingHtmlDivElement) {
     // F-44: monotoner Request-Token – überholt ein neuerer loadData-Lauf
     // diesen, bricht der Lauf an der nächsten await-Grenze ab.
     const token = ++loadToken;
+    // BG-B4: der CSV-Abruf ist zusätzlich abbrechbar (große Jahres-CSV).
+    const controller = new AbortController();
+    if (loadController) loadController.abort();
+    loadController = controller;
 
     // UI vorbereiten
     [
@@ -904,7 +956,8 @@ function app(configdata, enclosingHtmlDivElement) {
         `CSV ${year} wird heruntergeladen (kann einige Sekunden dauern) …`;
 
       // CSV über den lokalen Proxy laden (CORS-Workaround)
-      var fetched = await fetchCsvText(url);
+      loadController = controller;
+      var fetched = await fetchCsvText(url, controller.signal);
       if (token !== loadToken) return;
       var csvText = fetched.content;
       setBar(55);
@@ -912,32 +965,16 @@ function app(configdata, enclosingHtmlDivElement) {
 
       el.querySelector("#loading-text").textContent =
         "Daten werden verarbeitet …";
-      const result = Papa.parse(csvText, {
-        delimiter: ";",
-        header: true,
-        skipEmptyLines: true,
-        transformHeader: (h) => h.trim(),
-        transform: (v) => normalizeCsvText(v).trim(),
-      });
+      const parsed = parseCsvZuRecords(csvText);
       setBar(85);
 
       if (token !== loadToken) return;
 
-      // Nur vollständige, valide Zeilen
-      const parsedTotal = result.data.length;
-      allData = result.data.filter(
-        (r) =>
-          r.TATTAG &&
-          r.TATORT &&
-          r.TATBESTANDBE_TBNR &&
-          r.GELDBUSSE &&
-          !isNaN(parseInt(r.GELDBUSSE, 10)),
-      );
+      allData = parsed.records;
       // F-73: Zeilen ohne gültiges Datum/Tatort/Tatbestand/Bußgeld wurden oben
       // stillschweigend verworfen – die Differenz wird gezählt und (sofern >0)
       // als sichtbarer Hinweis angezeigt statt kommentarlos zu verschwinden.
-      const discardedCount = parsedTotal - allData.length;
-
+      const discardedCount = parsed.discarded;
       // Im instanzlokalen Cache speichern – nur vom aktuellsten Lauf.
       if (token !== loadToken) return;
       dataCache[year] = allData;
@@ -1016,17 +1053,123 @@ function app(configdata, enclosingHtmlDivElement) {
     });
   }
 
+  // ── Jahresvergleich ──────────────────────────────────────────────────────────
+  // Zeigt je Jahr Anzahl und Bußgeldsumme unter den aktuellen Filtern
+  // (Tatort/Kategorie/Bußgeld min.). Bewusst als Balkenliste statt als dritte
+  // Chart.js-Instanz: der F-57-Lifecycle-Guard prüft „genau 2 Charts“ und
+  // bleibt so unverändert scharf.
+  async function ladeJahresDaten(year, signal) {
+    if (dataCache[year]) return dataCache[year];
+    // PapaParse wird vom regulären Ladevorgang bereits geladen; hier nur
+    // absichern, falls der Vergleich zuerst aktiviert wird.
+    await loadScript("vendor/papaparse/papaparse.min.js");
+    const quelle = CSV_SOURCES[year];
+    if (!quelle) return null;
+    const fetched = await fetchCsvText(quelle, signal);
+    const parsed = parseCsvZuRecords(fetched.content);
+    dataCache[year] = parsed.records;
+    discardedCache[year] = parsed.discarded;
+    return parsed.records;
+  }
+
+  function renderVergleich() {
+    const body = el.querySelector("#vergleich-body");
+    if (!body) return;
+    const jahre = Object.keys(CSV_SOURCES).sort();
+    const proJahr = jahre.map((year) => {
+      const geladen = dataCache[year];
+      if (!geladen) return { year, verfuegbar: false };
+      // Dieselben Filter wie applyFilter, nur eben über die Jahresgrenze hinweg.
+      const treffer = geladen.filter((r) => {
+        if (ortFilter && !r.TATORT.toLowerCase().includes(ortFilter)) return false;
+        if (tbnrFilter && r.TATBESTANDBE_TBNR !== tbnrFilter) return false;
+        if (parseInt(r.GELDBUSSE, 10) < minFilter) return false;
+        return true;
+      });
+      return {
+        year,
+        verfuegbar: true,
+        anzahl: treffer.length,
+        summe: treffer.reduce((s, r) => s + parseInt(r.GELDBUSSE, 10), 0),
+      };
+    });
+
+    const maxAnzahl = Math.max(1, ...proJahr.map((e) => e.anzahl || 0));
+    const maxSumme = Math.max(1, ...proJahr.map((e) => e.summe || 0));
+    body.innerHTML = proJahr
+      .map((e) => {
+        if (!e.verfuegbar) {
+          return (
+            '<div class="vgl-block"><div class="vgl-jahr">' +
+            escapeHtml(e.year) +
+            '</div><div class="vgl-nicht-verfuegbar">Daten für dieses Jahr nicht verfügbar.</div></div>'
+          );
+        }
+        const wA = Math.round((e.anzahl / maxAnzahl) * 100);
+        const wS = Math.round((e.summe / maxSumme) * 100);
+        return (
+          '<div class="vgl-block">' +
+          '<div class="vgl-jahr">' +
+          escapeHtml(e.year) +
+          "</div>" +
+          '<div class="vgl-metric"><span class="vgl-legende">Verstöße</span>' +
+          '<div class="vgl-track"><div class="vgl-bar anzahl" style="width:' +
+          wA +
+          '%"></div></div>' +
+          '<span class="vgl-val">' +
+          escapeHtml(fmt(e.anzahl)) +
+          "</span></div>" +
+          '<div class="vgl-metric"><span class="vgl-legende">Bußgelder</span>' +
+          '<div class="vgl-track"><div class="vgl-bar summe" style="width:' +
+          wS +
+          '%"></div></div>' +
+          '<span class="vgl-val haupt">' +
+          escapeHtml(fmtEur(e.summe)) +
+          "</span></div>" +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
+  async function aktualisiereVergleich() {
+    if (!compareMode) return;
+    const controller = new AbortController();
+    if (compareController) compareController.abort();
+    compareController = controller;
+    const body = el.querySelector("#vergleich-body");
+    if (body) body.innerHTML = '<div class="text-muted small">Jahresdaten werden geladen …</div>';
+    try {
+      for (const year of Object.keys(CSV_SOURCES).sort()) {
+        if (controller.signal.aborted || disposed) return;
+        await ladeJahresDaten(year, controller.signal);
+      }
+    } catch (err) {
+      // Ein nicht ladbares Jahr darf den Vergleich nicht verhindern — es wird
+      // unten als „nicht verfügbar“ ausgewiesen.
+      if (controller.signal.aborted || disposed) return;
+    }
+    if (controller.signal.aborted || disposed) return;
+    renderVergleich();
+  }
+
   // ── Filter anwenden ───────────────────────────────────────────────────────────
 
+  // Filterwerte einmal zentral lesen: applyFilter (Jahresansicht) und
+  // renderVergleich (Jahresvergleich) müssen identisch filtern.
+  let ortFilter = "";
+  let tbnrFilter = "";
+  let minFilter = 0;
+
   function applyFilter() {
-    const ort = el.querySelector("#filter-ort").value.toLowerCase();
-    const tbnr = el.querySelector("#filter-tbnr").value;
-    const minB = parseInt(el.querySelector("#filter-min").value, 10) || 0;
+    ortFilter = el.querySelector("#filter-ort").value.toLowerCase();
+    tbnrFilter = el.querySelector("#filter-tbnr").value;
+    minFilter = parseInt(el.querySelector("#filter-min").value, 10) || 0;
 
     filteredData = allData.filter((r) => {
-      if (ort && !r.TATORT.toLowerCase().includes(ort)) return false;
-      if (tbnr && r.TATBESTANDBE_TBNR !== tbnr) return false;
-      if (parseInt(r.GELDBUSSE, 10) < minB) return false;
+      if (ortFilter && !r.TATORT.toLowerCase().includes(ortFilter)) return false;
+      if (tbnrFilter && r.TATBESTANDBE_TBNR !== tbnrFilter) return false;
+      if (parseInt(r.GELDBUSSE, 10) < minFilter) return false;
       return true;
     });
 
@@ -1040,6 +1183,7 @@ function app(configdata, enclosingHtmlDivElement) {
     updateKPIs();
     updateCharts();
     renderTable();
+    if (compareMode) renderVergleich();
   }
 
   // ── KPI-Kacheln ──────────────────────────────────────────────────────────────
@@ -1349,6 +1493,59 @@ function app(configdata, enclosingHtmlDivElement) {
     loadData(currentYear);
   });
 
+  // Jahresvergleich ein-/ausschalten
+  el.querySelector(`#app-vergleich-${bgUid}`).addEventListener("change", (e) => {
+    compareMode = e.target.checked;
+    if (compareMode) {
+      show("#app-vergleich");
+      aktualisiereVergleich();
+    } else {
+      hide("#app-vergleich");
+    }
+  });
+
+  // CSV-Export der aktuell gefilterten Einzelverstöße.
+  el.querySelector("#bg-btn-export").addEventListener("click", () => {
+    if (disposed) return;
+    if (filteredData.length === 0) {
+      el.querySelector("#filter-info").textContent = "Keine Daten zum Exportieren.";
+      return;
+    }
+    const esc = (v) => {
+      const s = String(v ?? "");
+      return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    const zeilen = [
+      "Datenjahr;Datum;Uhrzeit;Tatort;Verstosskategorie;TBNR;Bussgeld_EUR",
+    ];
+    filteredData.forEach((r) => {
+      zeilen.push(
+        [
+          currentYear,
+          r.TATTAG || "",
+          formatTime(r.TATZEIT),
+          r.TATORT || "",
+          tbnrLabel(r.TATBESTANDBE_TBNR),
+          r.TATBESTANDBE_TBNR || "",
+          r.GELDBUSSE ?? "",
+        ]
+          .map(esc)
+          .join(";"),
+      );
+    });
+    const blob = new Blob(["\uFEFF" + zeilen.join("\r\n")], {
+      type: "text/csv;charset=utf-8",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "bussgelder-export.csv";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+
   ["#filter-ort", "#filter-tbnr", "#filter-min"].forEach((id) => {
     el.querySelector(id).addEventListener("input", () => {
       clearTimeout(debounce);
@@ -1370,5 +1567,5 @@ function app(configdata, enclosingHtmlDivElement) {
 
 // ── addToHead – muss AUSSERHALB und NACH app() stehen ─────────────────────────
 function addToHead() {
-  return;
+  return ``;
 }

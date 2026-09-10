@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.30.3 - 2026-09-10
+- **FIX:** Same-Page-Re-Render räumt Vorgänger-Instanz ab (BG-B1): beide Charts leaken nicht mehr.
+- **FIX:** Lade-Race bei schnellem Jahreswechsel (BG-B3): ein bereits eingefügter, aber noch ladender Script-Tag wurde als „geladen“ gewertet — jetzt wird auf denselben Ladevorgang gewartet, statt mit `ReferenceError` abzubrechen.
+- **FIX:** CSV-Abruf ist abbrechbar (BG-B4): `AbortController` je Lauf, im Teardown und beim Jahreswechsel abgebrochen (der Token schützte bisher nur die UI, nicht den laufenden Download).
+- **TECH:** 18 Zeilen app-spezifisches CSS aus dem inline-`<style>` in `app.js` nach `app/app.css` verschoben; `isLeerErgebnis` entfernt, `addToHead` gibt `""` zurück (BG-B5).
+- **FEATURE:** Jahresvergleich (alle Jahre nebeneinander, aktuelle Filter wirken mit) und CSV-Export der gefilterten Einzelverstöße. Der Vergleich ist bewusst eine Balkenliste statt einer dritten Chart.js-Instanz — der Lifecycle-Guard „genau 2 Charts“ bleibt unverändert scharf.
+
 ## 1.30.2 - 2026-09-08
 - **FIX:** Variante-A-Verdrahtung (F-92): Typprüfung (csv-zip) je Jahr vor dem ersten Fetch; Quellen- und Ladefehler über `renderOdasFehler` (1.30.1 -> 1.30.2).
 
