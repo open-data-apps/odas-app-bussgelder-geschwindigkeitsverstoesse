@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.30.4 - 2026-10-02
+- ENH: Verwendete ODAS-Dienste in `odas-services` deklariert.
+
 ## 1.30.3 - 2026-09-10
 - **FIX:** Same-Page-Re-Render räumt Vorgänger-Instanz ab (BG-B1): beide Charts leaken nicht mehr.
 - **FIX:** Lade-Race bei schnellem Jahreswechsel (BG-B3): ein bereits eingefügter, aber noch ladender Script-Tag wurde als „geladen“ gewertet — jetzt wird auf denselben Ladevorgang gewartet, statt mit `ReferenceError` abzubrechen.
