@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.30.10 - 2026-10-15
+- FIX: Kopfzeile bei 360 px ohne Überlauf (Template): Logo- und Burger-Spalte passen sich der Breite an, das Menü-Symbol ragt nicht mehr über den rechten Rand. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.30.9 - 2026-10-15
 - FIX: Tatbestandsnamen ergänzt, Kopfzeile mobil umbrechend. Die Tatbestandsnamen (TBNR) sind gegen den Bundeseinheitlichen Tatbestandskatalog (KBA, 14. Auflage, gültig 09.11.2021 bis 31.08.2023) geprüft: 105 statt 23 Codes sind benannt (99,97 % der Zeilen 2021–2023). Mehrere bisherige Bezeichnungen waren falsch (z. B. 141236 ist „Innerorts ≤10 km/h“, nicht „Außerorts“; 141712 ist „Innerorts 21–25 km/h“, nicht „Autobahn ≤10“; der Katalog unterscheidet nur innerorts/außerorts, „Autobahn“ gibt es nur für Lkw/Bus nach § 18 StVO). Neu: Lkw-, Gefahrgut-/Bus- und weitere Tatbestände (Handy, Gurt u. a.). Unbekannte Codes erscheinen als „Sonstiger Tatbestand (TBNR …)“. Im Kategorie-Filter steht zusätzlich der Code, weil 103xxx- und 141xxx-Codes denselben Text tragen. Mobil bricht die Kopfzeile der Einzelverstöße-Tabelle um: „Einzelverstöße“, „CSV-Export“ und die Trefferzahl berühren sich nicht mehr.
 
