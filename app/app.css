@@ -76,3 +76,18 @@
 }
 .vgl-val.haupt { font-weight: 700; color: #1e293b; }
 .vgl-nicht-verfuegbar { font-size: .74rem; color: #9ca3af; }
+/* Mobile: keep the wide data table in its card's own horizontal scroller. */
+@media (max-width: 575.98px) {
+  #main-content .bg-app #app-table .card-body {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  #main-content .bg-app #app-kpis .kpi-card .kpi-val {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+}
