@@ -366,31 +366,114 @@ function app(configdata, enclosingHtmlDivElement) {
       CSV_FALLBACK_URLS[year];
   });
 
-  // Bundeseinheitlicher Tatbestandskatalog – wichtigste Codes
+  // Bundeseinheitlicher Tatbestandskatalog (KBA, 14. Auflage, gültig 09.11.2021–31.08.2023,
+  // Tabellen 11.1–11.3) – Codes der Bonner Daten 2021–2023
   const TBNR_LABELS = {
+    103178: "Lkw innerorts ≤10 km/h zu schnell",
+    103179: "Lkw innerorts 11–15 km/h zu schnell",
+    103185: "Lkw außerorts 11–15 km/h zu schnell",
     103202: "Innerorts ≤10 km/h zu schnell",
     103203: "Innerorts 11–15 km/h zu schnell",
     103204: "Innerorts 16–20 km/h zu schnell",
-    103205: "Innerorts 21–25 km/h zu schnell",
-    103206: "Innerorts 26–30 km/h zu schnell",
-    103207: "Innerorts 31–40 km/h zu schnell",
-    103208: "Innerorts 41–50 km/h zu schnell",
-    103209: "Innerorts >50 km/h zu schnell",
-    141236: "Außerorts ≤10 km/h zu schnell",
-    141237: "Außerorts 11–15 km/h zu schnell",
-    141238: "Außerorts 16–20 km/h zu schnell",
-    141239: "Außerorts 21–25 km/h zu schnell",
-    141240: "Außerorts 26–30 km/h zu schnell",
-    141241: "Außerorts 31–40 km/h zu schnell",
-    141242: "Außerorts 41–50 km/h zu schnell",
-    141243: "Außerorts >50 km/h zu schnell",
-    141712: "Autobahn ≤10 km/h zu schnell",
-    141721: "Autobahn 11–15 km/h zu schnell",
-    141722: "Autobahn 16–20 km/h zu schnell",
-    141723: "Autobahn 21–25 km/h zu schnell",
-    141724: "Autobahn 26–30 km/h zu schnell",
-    141725: "Autobahn 31–40 km/h zu schnell",
-    141726: "Autobahn 41–50 km/h zu schnell",
+    103208: "Außerorts ≤10 km/h zu schnell",
+    103209: "Außerorts 11–15 km/h zu schnell",
+    103210: "Außerorts 16–20 km/h zu schnell",
+    103600: "Zu schnell für örtliche Verhältnisse",
+    103602: "Zu schnell für örtliche Verhältnisse, Unfall",
+    103620: "Zu schnell bei schlechter Sicht, Unfall",
+    103715: "Lkw innerorts 11–15 km/h zu schnell",
+    103716: "Lkw innerorts 16–20 km/h zu schnell",
+    103717: "Lkw innerorts 21–25 km/h zu schnell",
+    103718: "Lkw innerorts 26–30 km/h zu schnell",
+    103719: "Lkw innerorts 31–40 km/h zu schnell",
+    103729: "Lkw außerorts 21–25 km/h zu schnell",
+    103730: "Lkw außerorts 26–30 km/h zu schnell",
+    103731: "Lkw außerorts 31–40 km/h zu schnell",
+    103736: "Gefahrgut/Bus innerorts ≤10 km/h zu schnell",
+    103737: "Gefahrgut/Bus innerorts 11–15 km/h zu schnell",
+    103753: "Gefahrgut/Bus außerorts 21–25 km/h zu schnell",
+    103761: "Innerorts 16–20 km/h zu schnell",
+    103762: "Innerorts 21–25 km/h zu schnell",
+    103763: "Innerorts 26–30 km/h zu schnell",
+    103764: "Innerorts 31–40 km/h zu schnell",
+    103765: "Innerorts 41–50 km/h zu schnell",
+    103766: "Innerorts 51–60 km/h zu schnell",
+    103767: "Innerorts 61–70 km/h zu schnell",
+    103768: "Innerorts >70 km/h zu schnell",
+    103773: "Außerorts 16–20 km/h zu schnell",
+    103774: "Außerorts 21–25 km/h zu schnell",
+    103775: "Außerorts 26–30 km/h zu schnell",
+    103776: "Außerorts 31–40 km/h zu schnell",
+    103777: "Außerorts 41–50 km/h zu schnell",
+    103778: "Außerorts 51–60 km/h zu schnell",
+    105600: "Außerorts rechts überholt",
+    118160: "Lkw Autobahn ≤10 km/h zu schnell",
+    118161: "Lkw Autobahn 11–15 km/h zu schnell",
+    118632: "Lkw Autobahn 16–20 km/h zu schnell",
+    118633: "Lkw Autobahn 21–25 km/h zu schnell",
+    118640: "Gefahrgut/Bus Autobahn ≤10 km/h zu schnell",
+    121172: "Sicherheitsgurt nicht angelegt",
+    121600: "Kind ohne Sicherung befördert",
+    123100: "Beeinträchtigte Sicht beim Fahren",
+    123106: "Gehör durch Geräte beeinträchtigt",
+    123624: "Handy/Elektronikgerät am Steuer",
+    123636: "Gesicht beim Fahren verhüllt",
+    141224: "Lkw innerorts ≤10 km/h zu schnell",
+    141225: "Lkw innerorts 11–15 km/h zu schnell",
+    141227: "Lkw außerorts ≤10 km/h zu schnell",
+    141228: "Lkw außerorts 11–15 km/h zu schnell",
+    141236: "Innerorts ≤10 km/h zu schnell",
+    141237: "Innerorts 11–15 km/h zu schnell",
+    141238: "Innerorts 16–20 km/h zu schnell",
+    141239: "Außerorts ≤10 km/h zu schnell",
+    141240: "Außerorts 11–15 km/h zu schnell",
+    141241: "Außerorts 16–20 km/h zu schnell",
+    141664: "Lkw innerorts 11–15 km/h zu schnell",
+    141665: "Lkw innerorts 16–20 km/h zu schnell",
+    141666: "Lkw innerorts 21–25 km/h zu schnell",
+    141667: "Lkw innerorts 26–30 km/h zu schnell",
+    141668: "Lkw innerorts 31–40 km/h zu schnell",
+    141669: "Lkw innerorts 41–50 km/h zu schnell",
+    141671: "Lkw innerorts >60 km/h zu schnell",
+    141677: "Lkw außerorts 16–20 km/h zu schnell",
+    141678: "Lkw außerorts 21–25 km/h zu schnell",
+    141679: "Lkw außerorts 26–30 km/h zu schnell",
+    141680: "Lkw außerorts 31–40 km/h zu schnell",
+    141681: "Lkw außerorts 41–50 km/h zu schnell",
+    141682: "Lkw außerorts 51–60 km/h zu schnell",
+    141687: "Gefahrgut/Bus innerorts ≤10 km/h zu schnell",
+    141688: "Gefahrgut/Bus innerorts 11–15 km/h zu schnell",
+    141689: "Gefahrgut/Bus innerorts 16–20 km/h zu schnell",
+    141690: "Gefahrgut/Bus innerorts 21–25 km/h zu schnell",
+    141700: "Gefahrgut/Bus außerorts ≤10 km/h zu schnell",
+    141701: "Gefahrgut/Bus außerorts 11–15 km/h zu schnell",
+    141702: "Gefahrgut/Bus außerorts 16–20 km/h zu schnell",
+    141703: "Gefahrgut/Bus außerorts 21–25 km/h zu schnell",
+    141705: "Gefahrgut/Bus außerorts 31–40 km/h zu schnell",
+    141711: "Innerorts 16–20 km/h zu schnell",
+    141712: "Innerorts 21–25 km/h zu schnell",
+    141713: "Innerorts 26–30 km/h zu schnell",
+    141714: "Innerorts 31–40 km/h zu schnell",
+    141715: "Innerorts 41–50 km/h zu schnell",
+    141716: "Innerorts 51–60 km/h zu schnell",
+    141717: "Innerorts 61–70 km/h zu schnell",
+    141718: "Innerorts >70 km/h zu schnell",
+    141720: "Außerorts 16–20 km/h zu schnell",
+    141721: "Außerorts 21–25 km/h zu schnell",
+    141722: "Außerorts 26–30 km/h zu schnell",
+    141723: "Außerorts 31–40 km/h zu schnell",
+    141724: "Außerorts 41–50 km/h zu schnell",
+    141725: "Außerorts 51–60 km/h zu schnell",
+    141726: "Außerorts 61–70 km/h zu schnell",
+    141727: "Außerorts >70 km/h zu schnell",
+    142130: "Verkehrsberuhigter Bereich ≤10 km/h zu schnell",
+    142131: "Verkehrsberuhigter Bereich 11–15 km/h zu schnell",
+    142629: "Verkehrsberuhigter Bereich 16–20 km/h zu schnell",
+    142630: "Verkehrsberuhigter Bereich 21–25 km/h zu schnell",
+    204100: "Führerschein nicht mitgeführt",
+    424648: "Fahren unter Wirkung berauschender Mittel",
+    811100: "Zulassungsbescheinigung nicht mitgeführt",
+    813100: "Änderung der Zulassungsdaten nicht gemeldet",
   };
 
   const MONTHS = [
@@ -632,9 +715,9 @@ function app(configdata, enclosingHtmlDivElement) {
 
       <!-- ── Tabelle ── -->
       <div id="app-table" class="card border-0 shadow-sm d-none">
-        <div class="card-header bg-white border-bottom d-flex justify-content-between align-items-center py-2">
+        <div class="card-header bg-white border-bottom d-flex flex-wrap gap-2 justify-content-between align-items-center py-2">
           <span class="fw-semibold small">Einzelverstöße</span>
-          <div class="d-flex align-items-center gap-2">
+          <div class="d-flex flex-wrap align-items-center gap-2">
             <button id="bg-btn-export" type="button" class="btn btn-sm btn-outline-secondary" title="Gefilterte Einzelverstöße als CSV laden">CSV-Export</button>
             <span id="table-info" class="text-muted" style="font-size:.8rem"></span>
           </div>
@@ -698,7 +781,7 @@ function app(configdata, enclosingHtmlDivElement) {
   }
   function tbnrLabel(code) {
     const c = (code || "").trim();
-    return TBNR_LABELS[c] || "TBNR " + c;
+    return TBNR_LABELS[c] || "Sonstiger Tatbestand (TBNR " + c + ")";
   }
   function formatTime(t) {
     const s = String(t || "").padStart(4, "0");
@@ -1058,7 +1141,8 @@ function app(configdata, enclosingHtmlDivElement) {
     codes.forEach((code) => {
       const opt = document.createElement("option");
       opt.value = code;
-      opt.textContent = tbnrLabel(code);
+      // gleiche Texte für 103xxx/141xxx-Codes: Code anhängen, damit Einträge unterscheidbar bleiben
+      opt.textContent = TBNR_LABELS[code] ? TBNR_LABELS[code] + " (" + code + ")" : tbnrLabel(code);
       sel.appendChild(opt);
     });
   }
