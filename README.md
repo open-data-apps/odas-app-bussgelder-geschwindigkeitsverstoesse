@@ -6,7 +6,7 @@ Interaktive Visualisierung von Bußgeldern und Geschwindigkeitsverstößen der S
 
 ## Funktionen
 
-![Screenshot der Bußgeld-App](assets/Desktop_Screenshot_1.png)
+![Screenshot der Bußgeld-App](assets/Desktop_Screenshot.png)
 
 ![Screenshot der Bußgeld-App (Detailansicht)](assets/Desktop_Screenshot_2.png)
 

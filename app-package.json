@@ -3,7 +3,7 @@
   "app-entwickler-name": "ondics-gmbh",
   "name-in-url": "bussgelder-geschwindigkeitsverstoesse",
   "name": "Bußgelder & Geschwindigkeitsverstöße",
-  "app-version": "1.30.7",
+  "app-version": "1.30.8",
   "app-package-version": "2",
   "odas-app-icon": "assets/odas-app-icon.svg",
   "app-icon": "assets/odas-app-icon.svg",
@@ -54,8 +54,12 @@
     "Bußgelder"
   ],
   "screenshots": [
-    "assets/Desktop_Screenshot_1.png",
-    "assets/Desktop_Screenshot_2.png"
+    "assets/Desktop_Screenshot.png",
+    "assets/Desktop_Screenshot_2.png",
+    "assets/Desktop_Screenshot_3.png",
+    "assets/Mobile_Screenshot.png",
+    "assets/Mobile_Screenshot_2.png",
+    "assets/Mobile_Screenshot_3.png"
   ],
   "daten": {
     "beschreibung": "Geschwindigkeitsverstöße im fließenden Verkehr der Stadt Bonn (monatlich aktualisiert). Quelle: Stadt Bonn – Ordnungsamt, Lizenz: CC Zero. Spalten: TATTAG (Datum), TATZEIT (Uhrzeit), TATORT (Straße), TATBESTANDBE_TBNR (Verstoßcode), GELDBUSSE (Bußgeld in EUR).",

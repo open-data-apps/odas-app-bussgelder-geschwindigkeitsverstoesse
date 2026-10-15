@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.30.8 - 2026-10-15
+- DOCS: Neue Store-Screenshots: je drei Desktop- (1440 × 1000) und Mobile-Aufnahmen (390 × 844) der aktuellen App, aufgenommen auf der Dev-Instanz. Bisherige Bilder nach `docs/screenshots/archive/2026-10-13/` verschoben, Bildverweis im README angepasst. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.30.7 - 2026-10-15
 - FIX: Mobil (bis 575 px): KPI-Werte brechen nicht mehr mitten in der Zahl um (1.30.6 erlaubte Umbruch an beliebiger Stelle, z. B. „215.7 / 51“). Stattdessen passt sich die Schriftgröße der Bildschirmbreite an, die Zahl bleibt einzeilig in ihrer Kachel.
 
