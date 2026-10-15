@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.30.7 - 2026-10-15
+- FIX: Mobil (bis 575 px): KPI-Werte brechen nicht mehr mitten in der Zahl um (1.30.6 erlaubte Umbruch an beliebiger Stelle, z. B. „215.7 / 51“). Stattdessen passt sich die Schriftgröße der Bildschirmbreite an, die Zahl bleibt einzeilig in ihrer Kachel.
+
 ## 1.30.6 - 2026-10-15
 - FIX: Mobil (bis 575 px): Große KPI-Werte (z. B. Bußgeldsumme) bleiben in ihrer Kachel, die breite Datentabelle scrollt in ihrer Karte statt die Seite zu verbreitern.
 

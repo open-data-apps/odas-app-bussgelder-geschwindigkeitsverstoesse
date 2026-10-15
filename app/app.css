@@ -83,11 +83,13 @@
     overflow-x: auto;
   }
 
+  #main-content .bg-app #app-kpis .kpi-card {
+    padding: 14px 12px;
+  }
+
   #main-content .bg-app #app-kpis .kpi-card .kpi-val {
-    max-width: 100%;
-    min-width: 0;
-    overflow-wrap: anywhere;
-    white-space: normal;
+    font-size: clamp(1.05rem, 5.4vw, 1.9rem);
+    white-space: nowrap;
   }
 
 }
