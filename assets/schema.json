@@ -43,8 +43,9 @@
     {
       "name": "GELDBUSSE",
       "title": "Geldbuße (€)",
-      "type": "integer",
-      "description": "Verwarnungs-/Bußgeld in Euro als ganze Zahl.",
+      "type": "number",
+      "decimalChar": ",",
+      "description": "Verwarnungs-/Bußgeld in Euro, mit Dezimalkomma (z. B. 132,5).",
       "constraints": {
         "required": false
       }
