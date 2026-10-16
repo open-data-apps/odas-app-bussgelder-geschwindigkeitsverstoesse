@@ -45,7 +45,7 @@ Datensätze zu Geschwindigkeitsverstößen mit folgenden Kernfeldern:
 | `TATZEIT`           | Uhrzeit im HHmm-Format           | `1430`           |
 | `TATORT`            | Ort/Straße des Verstoßes        | `Mainzer Straße` |
 | `TATBESTANDBE_TBNR` | Verstoßcode (Tatbestandskatalog) | `103205`         |
-| `GELDBUSSE`         | Bußgeld in EUR                  | `55`             |
+| `GELDBUSSE`         | Bußgeld in EUR, Dezimalkomma     | `55`, `132,5`    |
 
 ---
 
@@ -68,6 +68,14 @@ App läuft auf http://localhost:8089 (Konfiguration wird lokal geladen).
 | `assets/odas-app-icon.svg` | App-Icon                                                                     |
 | `odas-config/config.json`  | Lokale Konfiguration für die Entwicklung                                    |
 | `docker-compose.yml`       | Lokale Laufzeitumgebung                                                      |
+
+### Tests
+
+Offline-Test (lädt die ausgelieferte `app/app.js` per `vm`, prüft Bußgelder mit Dezimalkomma):
+
+```bash
+node --test tests/*.test.cjs
+```
 
 ---
 

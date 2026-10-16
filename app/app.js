@@ -777,7 +777,18 @@ function app(configdata, enclosingHtmlDivElement) {
     return Number(n).toLocaleString("de-DE");
   }
   function fmtEur(n) {
-    return Number(n).toLocaleString("de-DE") + "\u202F€";
+    // Ganze Euro ohne, Cent-Beträge mit zwei Nachkommastellen („132,50 €“).
+    const v = Math.round(Number(n) * 100) / 100;
+    return (
+      v.toLocaleString("de-DE", {
+        minimumFractionDigits: v % 1 ? 2 : 0,
+        maximumFractionDigits: 2,
+      }) + "\u202F€"
+    );
+  }
+  // GELDBUSSE kommt mit Dezimalkomma („132,5“); parseInt schnitt die Cent ab.
+  function geldbusse(r) {
+    return Number(String(r.GELDBUSSE).replace(",", "."));
   }
   function tbnrLabel(code) {
     const c = (code || "").trim();
@@ -933,7 +944,7 @@ function app(configdata, enclosingHtmlDivElement) {
         r.TATORT &&
         r.TATBESTANDBE_TBNR &&
         r.GELDBUSSE &&
-        !isNaN(parseInt(r.GELDBUSSE, 10)),
+        !isNaN(geldbusse(r)),
     );
     return { records: records, discarded: parsedTotal - records.length };
   }
@@ -1177,14 +1188,14 @@ function app(configdata, enclosingHtmlDivElement) {
       const treffer = geladen.filter((r) => {
         if (ortFilter && !r.TATORT.toLowerCase().includes(ortFilter)) return false;
         if (tbnrFilter && r.TATBESTANDBE_TBNR !== tbnrFilter) return false;
-        if (parseInt(r.GELDBUSSE, 10) < minFilter) return false;
+        if (geldbusse(r) < minFilter) return false;
         return true;
       });
       return {
         year,
         verfuegbar: true,
         anzahl: treffer.length,
-        summe: treffer.reduce((s, r) => s + parseInt(r.GELDBUSSE, 10), 0),
+        summe: treffer.reduce((s, r) => s + geldbusse(r), 0),
       };
     });
 
@@ -1258,12 +1269,12 @@ function app(configdata, enclosingHtmlDivElement) {
   function applyFilter() {
     ortFilter = el.querySelector("#filter-ort").value.toLowerCase();
     tbnrFilter = el.querySelector("#filter-tbnr").value;
-    minFilter = parseInt(el.querySelector("#filter-min").value, 10) || 0;
+    minFilter = parseFloat(el.querySelector("#filter-min").value) || 0;
 
     filteredData = allData.filter((r) => {
       if (ortFilter && !r.TATORT.toLowerCase().includes(ortFilter)) return false;
       if (tbnrFilter && r.TATBESTANDBE_TBNR !== tbnrFilter) return false;
-      if (parseInt(r.GELDBUSSE, 10) < minFilter) return false;
+      if (geldbusse(r) < minFilter) return false;
       return true;
     });
 
@@ -1291,14 +1302,14 @@ function app(configdata, enclosingHtmlDivElement) {
     }
     const anzahl = filteredData.length;
     const summe = filteredData.reduce(
-      (s, r) => s + parseInt(r.GELDBUSSE, 10),
+      (s, r) => s + geldbusse(r),
       0,
     );
     const avg = Math.round(summe / anzahl);
     const orte = new Set(filteredData.map((r) => r.TATORT)).size;
 
     el.querySelector("#kpi-anzahl").textContent = fmt(anzahl);
-    el.querySelector("#kpi-summe").textContent = fmtEur(summe);
+    el.querySelector("#kpi-summe").textContent = fmtEur(Math.round(summe)); // ganze Euro, passt mobil in die Kachel
     el.querySelector("#kpi-avg").textContent = fmtEur(avg);
     el.querySelector("#kpi-orte").textContent = fmt(orte);
   }
@@ -1313,7 +1324,7 @@ function app(configdata, enclosingHtmlDivElement) {
       const m = getMonth(r.TATTAG);
       if (m >= 0) {
         monatCounts[m]++;
-        monatSummen[m] += parseInt(r.GELDBUSSE, 10);
+        monatSummen[m] += geldbusse(r);
       }
     });
 
@@ -1434,7 +1445,7 @@ function app(configdata, enclosingHtmlDivElement) {
 
     el.querySelector("#table-body").innerHTML = rows
       .map((r) => {
-        const b = parseInt(r.GELDBUSSE, 10);
+        const b = geldbusse(r);
         const bClass =
           b >= 200
             ? "text-danger fw-bold"
