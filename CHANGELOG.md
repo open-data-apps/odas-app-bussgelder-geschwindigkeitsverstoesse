@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.30.13 - 2026-11-03
+- DOCS: MIT-Lizenz ergänzt: `LICENSE` liegt im Repository und im Lieferpaket (`make zip`), das README hat einen Abschnitt „Lizenz“. Keine Änderung an App-Code oder Konfiguration.
+
 ## 1.30.12 - 2026-10-16
 - FIX: Bußgelder mit Dezimalkomma (z. B. 132,5 oder 143,75) werden vollständig eingelesen; bisher schnitt die App die Cent-Beträge ab. Das betraf die Tabelle, den Mindestbetrag-Filter, die KPI-Summe, das Ø-Bußgeld, das Monatsdiagramm und den Jahresvergleich (Summen 2021 um 419,75 €, 2022 um 224,75 €, 2023 um 145 € zu niedrig). Cent-Beträge erscheinen jetzt im deutschen Format mit zwei Nachkommastellen (132,50 €), ganze Euro weiterhin ohne. Die Kachel „Bußgelder gesamt“ zeigt die Summe wie das Ø-Bußgeld auf ganze Euro gerundet, damit sie auch auf dem Handy in die Kachel passt; Tabelle, Diagramm und Jahresvergleich zeigen die Cent. Der Mindestbetrag-Filter berücksichtigt auch Nachkommastellen. Neuer Test `tests/geldbusse.test.cjs`.
 
